@@ -1,0 +1,32 @@
+---
+description: Prefer LTS / current stable versions for languages, runtimes, compilers, and libraries
+alwaysApply: true
+---
+
+# Use LTS / stable versions
+
+- **Default to LTS**: For runtimes and toolchains (Node.js, Python, Java, .NET, Go, Rust, PostgreSQL, etc.) target the active **LTS** or current stable release—never end-of-life or pre-release builds in production code.
+- **Pin where it matters**: Lock major versions for languages and frameworks (`engines` in `package.json`, `.nvmrc`, `.python-version`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `Dockerfile` base images). CI should use the same version a developer runs.
+- **Libraries**: Prefer the latest stable minor of a maintained major. Avoid `0.x` libraries for core paths unless no alternative exists; never depend on unmaintained packages (no releases for ~12+ months, archived repo, open critical CVEs).
+- **No alphas/betas/RCs in main branches**: Pre-release versions belong behind a feature branch or experiment flag, not in `main`/production lockfiles.
+- **Upgrade cadence**: When the active LTS changes, plan an upgrade before the previous one hits EOL. Track it as work, don’t silently drift.
+- **Verify before bumping**: Read the changelog/migration notes; run the test suite; check transitive deps for compatibility.
+- **Security patches**: Apply security releases of the current LTS quickly—do not pin to a vulnerable patch version “for stability.”
+
+```jsonc
+// ✅ GOOD: package.json pins to an LTS Node major, current stable libs
+{
+  "engines": { "node": ">=20.11.0 <21" },
+  "dependencies": {
+    "express": "^4.19.2",
+    "zod": "^3.23.8"
+  }
+}
+```
+
+```text
+# ❌ BAD signals
+- Node 17 / 19 in CI (non-LTS, EOL)
+- "react": "next" or "^0.0.1-alpha.3" in a production app
+- A library whose last release was 3+ years ago and has open security issues
+```

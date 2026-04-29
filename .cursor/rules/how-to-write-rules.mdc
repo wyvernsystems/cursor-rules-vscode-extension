@@ -1,0 +1,103 @@
+---
+description: Author and maintain Cursor project rules—location, frontmatter, scope, and quality bar
+globs: "**/.cursor/rules/*.mdc"
+alwaysApply: false
+---
+
+# How to write Cursor rules (this project)
+
+Project rules live only in `.cursor/rules/` as `.mdc` files (Markdown with YAML frontmatter). They steer the AI toward consistent behavior; treat them like short internal playbooks, not essays.
+
+## Where files go
+
+- **Do**: `PROJECT_ROOT/.cursor/rules/<name>.mdc`
+- **Do not**: project root, `docs/`, package folders, or any path outside `.cursor/rules/`
+
+Suggested layout:
+
+```text
+.cursor/rules/
+├── how-to-write-rules.mdc
+├── evolving-project-rules.mdc
+├── cursor-rules-maintenance.mdc
+├── clean-code.mdc
+└── domain-specific-thing.mdc
+```
+
+## Filenames
+
+- **kebab-case**: `api-error-handling.mdc`, not `ApiRules.mdc`
+- **Extension**: always `.mdc`
+- **Name**: describes the single topic (agents use `description` for nuance; the filename is for humans and search)
+
+## Frontmatter (required)
+
+Every rule starts with YAML between `---` lines. Fields Cursor uses:
+
+| Field | Type | Purpose |
+|-------|------|-----------|
+| `description` | string | Shown in the rule picker; one line, specific enough to choose the right rule |
+| `globs` | string | Optional. Glob for paths; rule is considered when matching files are in context |
+| `alwaysApply` | boolean | If `true`, rule applies in every chat for this project (use sparingly) |
+
+**Scope rules of thumb**
+
+- **`alwaysApply: true`**: project-wide norms (style, security mindset, how we ship). Few rules; each must earn its token cost.
+- **`alwaysApply: false` + `globs`**: stack- or area-specific rules (e.g. `**/*.tsx`, `server/**/*.py`). Prefer this over one giant always-on rule.
+- **`alwaysApply: false` and omit `globs` or leave invalid YAML**: confusing or broken—avoid. If the rule is meta (only for editing rules), set e.g. `globs: "**/.cursor/rules/*.mdc"`.
+
+**Valid examples**
+
+```yaml
+---
+description: TypeScript strictness and module boundaries for this repo
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+```
+
+```yaml
+---
+description: Release and versioning expectations for maintainers
+alwaysApply: true
+---
+```
+
+## Body content
+
+1. **Title**: one `#` heading stating the topic.
+2. **Bullets over prose**: scannable constraints and preferences.
+3. **Examples**: small ❌/✅ snippets when a rule is easy to misread without them.
+4. **One concern per file**: split “React + API + SQL” into multiple rules with different `globs` instead of one megadoc.
+5. **Length**: aim roughly **under ~50 lines** per rule for model focus; if you need more, consider splitting or linking to repo docs and keeping the rule as a summary + pointer.
+
+## Writing `description`
+
+- Bad: `Rules` / `Misc` / `Important`
+- Good: `GraphQL schema naming and pagination for the BFF` / `No PII in logs; redaction checklist`
+
+## Writing `globs`
+
+- Prefer explicit roots when it helps: `apps/web/**/*.tsx` vs `**/*.tsx` if the monorepo is large.
+- Multiple extensions: `**/*.{ts,tsx}` (quoted if your YAML parser needs it).
+- Test mentally: “If I only open `foo.rs`, should this rule apply?” If no, do not use a catch-all glob.
+
+## Checklist before you merge a new rule
+
+- [ ] File is `PROJECT_ROOT/.cursor/rules/<kebab-case>.mdc`
+- [ ] Frontmatter parses (no dangling `globs:` without a value)
+- [ ] `description` is unique and actionable
+- [ ] Scope is intentional (`alwaysApply` vs `globs`, not both fighting each other without reason)
+- [ ] Examples are minimal and copy-paste realistic for this repo
+- [ ] No duplicate guidance that already exists in another rule (link in prose or consolidate)
+
+## Anti-patterns
+
+- Duplicating long specs from `README`—summarize in the rule, detail in docs.
+- Vague “write good code” without concrete checks—prefer measurable guidance.
+- Secrets, credentials, or environment-specific values inside rules (they are versioned like code).
+
+## Related project docs
+
+- User- or team-wide editor settings belong in Cursor/VS Code settings, not `.cursor/rules/`.
+- For repository-wide agent instructions outside rule files, some teams use `AGENTS.md` at the repo root; keep `.cursor/rules/` for scoped, file-context-aware guidance.
