@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-04-29
+
+### Renamed
+
+- **Package name**: `ai-rules` → `ai-rulebook` in `package.json`. The
+  Marketplace package id is now **`WyvernSystemsLLC.ai-rulebook`** (was
+  `WyvernSystemsLLC.ai-rules`), and `vsce package` produces
+  `ai-rulebook-<version>.vsix` (e.g. `ai-rulebook-1.2.0.vsix`) instead of
+  `ai-rules-<version>.vsix`. README and REQUIREMENTS updated to reflect
+  the new id. No prior public Marketplace release used the old id, so
+  this is a no-op for end users.
+
+### Unchanged (stable contracts)
+
+- On-disk rules layout stays `.cursor/rules/ai-rules/` and
+  `bundled/ai-rules/`. Cline mirror stays `.clinerules/ai-rules/`. Global
+  mirror stays `<globalStorage>/ai-rules-mirror/ai-rules/`. Command IDs
+  stay `aiRules.*`, settings stay `aiRules.*`, view IDs stay
+  `aiRules.rulesTree` / `aiRulesSidebar`. Existing keybindings, settings
+  overrides, and on-disk rule folders keep working without migration.
+
 ## [1.1.1] - 2026-04-29
 
 ### Changed
