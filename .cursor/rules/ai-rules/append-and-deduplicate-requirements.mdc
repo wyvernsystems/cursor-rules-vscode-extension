@@ -5,22 +5,21 @@ alwaysApply: true
 
 # Append and deduplicate requirements
 
-When the user states a **new requirement**, **constraint**, **acceptance criterion**, or **non-goal**, persist it in **`REQUIREMENTS.md`** at the repo root (or **`docs/REQUIREMENTS.md`** if that file already exists—pick one canonical path per repo and stick to it).
+When the user states a **requirement**, **constraint**, **acceptance criterion**, or **non-goal**, persist it in **`REQUIREMENTS.md`** at the repo root (or **`docs/REQUIREMENTS.md`** if that already exists). Pick one canonical path per repo.
 
 ## Before appending
 
-1. **Read** the whole file (or the relevant section if it is long and clearly structured).
-2. **Search** for near-duplicates: same idea with different wording, overlapping bullets, or an older item superseded by the new text.
-3. **Consolidate** instead of stacking duplicates:
-   - Merge bullets into one clearer statement.
-   - Mark superseded items as ~~struck~~ or add “**Superseded by:** …” with a date if the project does that elsewhere.
-4. **Group** related items under stable headings (e.g. *Functional*, *Non-functional*, *Out of scope*) if the file already uses sections; do not invent heavy structure for a two-line file.
+1. **Read** the file (or the relevant section).
+2. **Search** for near-duplicates: same idea, different wording, or items the new text supersedes.
+3. **Consolidate** instead of stacking duplicates: merge bullets; mark superseded items as ~~struck~~ or note "**Superseded by:** …" with a date if the file already does that.
+4. **Group** under existing headings (e.g. *Functional*, *Non-functional*, *Out of scope*) when present; don't invent heavy structure for a tiny file.
 
 ## Format
 
-- Short, testable bullets; **stable IDs** or numbering only if the file already uses them.
-- Prefer present tense (“System must …”) or “MUST / SHOULD” only if the document already uses RFC-style language.
+- Short, testable bullets.
+- Stable IDs or numbering only if the file already uses them.
+- Use "MUST / SHOULD" only if the document already does.
 
-## If no requirements file exists
+## Missing file
 
-- Create **`REQUIREMENTS.md`** with a one-line title and `## Requirements` unless the user points to a different standard path.
+- Create **`REQUIREMENTS.md`** with a title and `## Requirements` heading unless the user points to a different path.

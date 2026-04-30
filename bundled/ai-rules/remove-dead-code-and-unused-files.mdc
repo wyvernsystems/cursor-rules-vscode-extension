@@ -5,22 +5,22 @@ alwaysApply: true
 
 # Remove dead code and unused files
 
-Each time you finish a meaningful change (or before merging), **look for** unused code paths, unreachable exports, stale files, and orphaned assets tied to removed features.
+After meaningful changes (or before merging), look for unused code paths, unreachable exports, and orphan files tied to removed features.
 
-## Dead code (in code)
+## Dead code
 
-- Prefer **evidence**: build/typecheck, test suite, linter unused warnings, or repo-standard tools (e.g. Knip, ts-prune, coverage) when they already exist—do not add heavy tooling unless the user asks.
-- Remove **unused** private helpers, imports, branches, feature flags, and commented-out blocks that no longer apply.
-- If removal is **ambiguous** (might be used dynamically or by another package), **do not delete**—flag it for the user or add a narrow test/search proof first.
+- Prefer **evidence**: build/typecheck, tests, linter unused warnings, or repo-standard tools (Knip, ts-prune, coverage) when they exist. Don't add heavy tooling unless asked.
+- Remove unused private helpers, imports, branches, feature flags, and stale commented blocks.
+- If usage is **ambiguous** (dynamic, cross-package), don't delete—flag for the user or add proof first.
 
-## Unused / orphan files
+## Orphan files
 
-- Delete files that are **clearly** leftover from refactors (e.g. old component next to replacement, duplicate config, backup copies like `*.bak`) when nothing references them.
-- Search for **imports / path references** before deleting shared folders.
-- **Do not** remove files you cannot attribute (unknown purpose)—ask or leave a short note in the PR/summary.
+- Delete files clearly leftover from refactors (old component next to its replacement, duplicate config, `*.bak`) when nothing references them.
+- Search imports/path references before deleting shared folders.
+- Don't delete files of unknown purpose—ask or note in the summary.
 
 ## Safety
 
-- Never delete **`node_modules`**, **`.git`**, secrets, or user home paths.
-- Prefer **git-tracked** awareness: if a file might still matter on other branches, mention that instead of silent delete.
-- After removals, ensure the project still **builds/tests** at least as well as before for the touched area.
+- Never delete `node_modules`, `.git`, secrets, or paths outside the repo.
+- A file may matter on other branches—mention that instead of silently deleting.
+- After removals, ensure the touched area still builds/tests at least as well as before.

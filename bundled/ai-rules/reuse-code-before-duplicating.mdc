@@ -5,20 +5,20 @@ alwaysApply: true
 
 # Reuse shared code before duplicating it
 
-- **Search first**: Before writing a helper, look for existing utilities, hooks, services, or types that already solve the problem.
-- **Extract on the third copy**: Two similar snippets can be a coincidence; three is a signal—lift the shared idea into one place.
-- **Pick the right home**: Place shared code in an existing module or a clearly named `*/shared/`, `*/lib/`, or `*/utils/` boundary—never deep inside an unrelated feature.
-- **Narrow surface**: Export a small, well-named function or type rather than a grab-bag “helpers” module. Hidden coupling is worse than a little duplication.
-- **Composition > copy-paste**: Prefer composing existing functions/components/hooks; pass parameters instead of forking near-identical variants.
-- **Avoid premature abstraction**: If two cases will likely diverge, keep them separate until the shared shape is obvious. Re-evaluate when the third caller appears.
-- **Update call sites**: When you extract, replace the duplicates—don’t leave stale copies that drift.
+- **Search first** for an existing helper, hook, service, or type before writing one.
+- **Extract on the third copy**—two snippets can coincide; three is a signal.
+- **Pick the right home**: an existing module, or `*/shared/`, `*/lib/`, `*/utils/`. Never bury shared code inside an unrelated feature.
+- **Narrow surface**: export a small, well-named function or type—not a "helpers" grab-bag.
+- **Compose** existing functions/components/hooks; pass parameters instead of forking near-duplicates.
+- **Avoid premature abstraction**: if cases will likely diverge, keep them separate; revisit at the third caller.
+- **Update call sites** when you extract—don't leave stale copies that drift.
 
 ```typescript
-// ❌ BAD: same logic copy-pasted across files
+// ❌ same logic copy-pasted
 function totalA(items: Item[]) { return items.reduce((s, i) => s + i.priceCents, 0); }
 function totalB(rows: Item[])  { return rows.reduce((s, r) => s + r.priceCents, 0); }
 
-// ✅ GOOD: one shared, well-named function reused everywhere
+// ✅ one shared function reused everywhere
 export function sumPriceCents(items: readonly Item[]): number {
   return items.reduce((sum, item) => sum + item.priceCents, 0);
 }

@@ -6,30 +6,28 @@ alwaysApply: false
 
 # Format Markdown for readability and clean diffs
 
-Apply when creating or editing Markdown files (READMEs, docs, RFCs, ADRs, release notes). Keep files scannable and diff-friendly.
+Apply when creating or editing Markdown (READMEs, docs, RFCs, ADRs, release notes).
 
 ## Structure
 
-- **One H1** per file (`# Title`) at the top; use `##` and `###` for sections—do not skip levels.
-- **Short paragraphs**: 1–4 sentences each. Prefer bullet lists for enumerations.
-- **Table of contents**: Add one only when the file is long enough to need it (roughly 5+ top-level sections).
+- One **H1** per file at the top; use `##` and `###` for sections—don't skip levels.
+- Short paragraphs (1–4 sentences). Prefer bullets for enumerations.
+- Add a TOC only when the file has roughly 5+ top-level sections.
 
 ## Headings and lists
 
-- Sentence case for headings (`## Getting started`, not `## Getting Started`).
-- Use `-` for unordered lists (consistent across the repo). Indent nested items by **2 spaces**.
-- Numbered lists only when order matters (steps, ranked items).
+- **Sentence case** for headings (`## Getting started`).
+- Use `-` for unordered lists; indent nested items by **2 spaces**.
+- Numbered lists only when order matters.
 
-## Code, links, and emphasis
+## Code, links, emphasis
 
-- Always use **fenced code blocks** with a language tag: ` ```ts `, ` ```bash `, ` ```json `.
-- Inline code with backticks for filenames, commands, identifiers: `package.json`, `npm test`, `UserService`.
-- Links: `[descriptive text](https://example.com)`—never bare URLs in prose, never “click here.”
-- Emphasis: `**bold**` for key terms, `*italics*` sparingly. Avoid ALL CAPS.
+- Always use **fenced code blocks** with a language tag (` ```ts `, ` ```bash `, ` ```json `).
+- Inline code with backticks for filenames, commands, identifiers (`package.json`, `npm test`, `UserService`).
+- Links: `[descriptive text](https://example.com)`. No bare URLs, no "click here".
+- `**bold**` for key terms, `*italics*` sparingly. No ALL CAPS.
 
 ## Tables
-
-- Include a header row and alignment row. Keep tables narrow; for wide content, prefer lists.
 
 ```markdown
 | Field | Type   | Notes              |
@@ -38,16 +36,16 @@ Apply when creating or editing Markdown files (READMEs, docs, RFCs, ADRs, releas
 | email | string | Lowercased on save |
 ```
 
+Keep tables narrow; for wide content, prefer lists.
+
 ## Hygiene
 
-- One sentence per line (or wrap at ~100 cols)—both make diffs and review easier; pick one and be consistent within a file.
-- Leave a blank line before and after headings, lists, code fences, and tables.
-- End the file with a single newline; no trailing whitespace.
-- Relative links for in-repo files (`./CONTRIBUTING.md`); absolute URLs only for external resources.
+- One sentence per line **or** wrap at ~100 cols—be consistent within a file.
+- Blank line before and after headings, lists, code fences, tables.
+- End with a single newline; no trailing whitespace.
+- Relative links for in-repo files (`./CONTRIBUTING.md`); absolute URLs for external.
 
 ## README minimum
-
-A repo or package `README.md` should include, in order:
 
 1. Title and one-line summary
 2. Quickstart (install + run)

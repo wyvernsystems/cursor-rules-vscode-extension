@@ -5,18 +5,18 @@ alwaysApply: true
 
 # Update CHANGELOG for notable changes
 
-When you ship or describe **user-visible** or **release-worthy** changes (features, fixes, breaking changes, deprecations, security-relevant behavior), update **`CHANGELOG.md`** at the repo root (create it if missing and the project uses a changelog).
+When a change is **user-visible** or **release-worthy** (feature, fix, breaking change, deprecation, security-relevant), update **`CHANGELOG.md`** at the repo root.
 
-## What to log
+## Log
 
-- **Added** / **Changed** / **Fixed** / **Removed** / **Security** — use [Keep a Changelog](https://keepachangelog.com/) style headings when the file already follows that shape.
-- Prefer an **`[Unreleased]`** section at the top for work not yet tagged; move bullets to a dated section when the user cuts a release.
-- One line per bullet; link issues/PRs if the repo already does.
+- **Added** / **Changed** / **Fixed** / **Removed** / **Security**—use [Keep a Changelog](https://keepachangelog.com/) style if the file already does.
+- Keep an **`[Unreleased]`** section at the top; move bullets to a dated section on release.
+- One bullet per change; link issues/PRs if the repo already does.
 
-## What not to log
+## Don't log
 
-- Internal refactors with no outward effect, typo-only edits in comments, or dependency bumps unless they change behavior or supported versions (then mention briefly).
+- Internal refactors with no outward effect, typo edits in comments, or dependency bumps unless they change behavior or supported versions.
 
-## If CHANGELOG.md does not exist
+## Missing file
 
-- Ask once whether to create one, or create a minimal file with `# Changelog` and `## [Unreleased]` if the user’s workflow clearly expects it.
+- Ask once whether to create one, or create a minimal `CHANGELOG.md` with `# Changelog` and `## [Unreleased]` if the workflow clearly expects it.

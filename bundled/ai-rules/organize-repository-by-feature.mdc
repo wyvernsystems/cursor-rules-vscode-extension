@@ -5,17 +5,16 @@ alwaysApply: true
 
 # Organize the repository by feature and convention
 
-- **Predictable layout**: New files go where similar files already live. If nothing fits, propose a folder rather than dropping files at the root.
-- **Feature-first**: Group by feature/domain (e.g. `src/features/billing/`) over generic buckets (`src/everything/`). Generic folders like `utils/` or `components/` should hold cross-feature code only.
-- **One purpose per folder**: A directory should answer “what lives here?” in one short sentence. Split when the answer becomes a list.
-- **Stable boundaries**: Public entry points (e.g. `index.ts`, `mod.rs`, `__init__.py`) re-export the intended API. Cross-feature imports go through these, not deep paths.
-- **Naming**: Use kebab-case for filenames unless the language ecosystem dictates otherwise (e.g. PascalCase React components, snake_case Python modules). Be consistent within a folder.
-- **No junk in root**: Keep the repo root for top-level configs, `README`, `LICENSE`, and tooling. Avoid dumping scripts, scratch files, or one-off notes there.
-- **Tests live next to code**: Either colocate (`foo.ts` + `foo.test.ts`) or mirror under `tests/`—pick one and stick to it.
-- **Delete dead paths**: Remove unused folders, generated artifacts, and commented-out modules; add them to `.gitignore` instead of versioning them.
+- **Feature-first**: group by domain (e.g. `src/features/billing/`) over generic buckets. `utils/` and `components/` are for cross-feature code only.
+- **Predictable layout**: put new files where similar files live; propose a folder if nothing fits.
+- **One purpose per folder**: a folder should answer "what lives here?" in one sentence.
+- **Stable boundaries**: cross-feature imports go through public entry points (`index.ts`, `mod.rs`, `__init__.py`), not deep paths.
+- **Naming**: kebab-case unless the language dictates otherwise (PascalCase React components, snake_case Python). Be consistent within a folder.
+- **No junk in root**: keep root for top-level configs, `README`, `LICENSE`, tooling.
+- **Tests next to code**: colocate (`foo.ts` + `foo.test.ts`) or mirror under `tests/`—pick one per repo.
+- **Delete dead paths**: remove unused folders and generated artifacts; `.gitignore` instead of versioning them.
 
 ```text
-# ✅ GOOD: feature-first, clear boundaries
 src/
 ├── features/
 │   ├── billing/

@@ -6,111 +6,75 @@ alwaysApply: false
 
 # Write Cursor rules for this project
 
-Project rules for this repository live under `.cursor/rules/ai-rules/` as `.mdc` files (Markdown with YAML frontmatter). They steer the AI toward consistent behavior; treat them like short internal playbooks, not essays.
+Rules live in `.cursor/rules/ai-rules/` as `.mdc` files (Markdown + YAML frontmatter). Treat them like short internal playbooks, not essays.
 
 ## Where files go
 
-- **Do**: `PROJECT_ROOT/.cursor/rules/ai-rules/<name>.mdc` (this pack uses the folder name **`ai-rules`**)
-- **Do not**: project root, `docs/`, package folders, or any path outside `.cursor/rules/`
-
-Suggested layout:
-
-```text
-.cursor/rules/
-└── ai-rules/
-    ├── ABOUT_RULES.md
-    ├── state-active-project-rules.mdc
-    ├── write-cursor-rules-for-this-project.mdc
-    ├── maintain-cursor-rules.mdc
-    ├── evolve-rules-when-codebase-patterns-change.mdc
-    ├── write-clean-code.mdc
-    ├── reuse-code-before-duplicating.mdc
-    ├── organize-repository-by-feature.mdc
-    ├── secure-code-data-and-dependencies.mdc
-    ├── prefer-lts-stable-runtimes-and-libraries.mdc
-    ├── use-this-format-for-markdown-files.mdc
-    ├── update-changelog-for-notable-changes.mdc
-    ├── append-and-deduplicate-requirements.mdc
-    ├── verify-syntax-and-fix-before-finishing.mdc
-    ├── remove-dead-code-and-unused-files.mdc
-    └── domain-specific-thing.mdc
-```
+- **Do**: `PROJECT_ROOT/.cursor/rules/ai-rules/<name>.mdc`.
+- **Don't**: project root, `docs/`, package folders, or anywhere outside `.cursor/rules/`.
 
 ## Filenames
 
-- **kebab-case**: `api-error-handling.mdc`, not `ApiRules.mdc`
-- **Verb-first** when practical so intent is obvious from the filename (e.g. `state-active-project-rules.mdc`, `use-this-format-for-markdown-files.mdc`).
-- **Extension**: always `.mdc`
-- **Name**: describes the single topic (agents use `description` for nuance; the filename is for humans and search)
+- **kebab-case**, **verb-first** when natural (`state-active-project-rules.mdc`).
+- Always `.mdc`.
+- Name describes the single topic; the `description` adds nuance.
 
-## Frontmatter (required)
+## Frontmatter
 
-Every rule starts with YAML between `---` lines. Fields Cursor uses:
+Every rule starts with YAML between `---` lines:
 
 | Field | Type | Purpose |
-|-------|------|-----------|
-| `description` | string | Shown in the rule picker; one line, specific enough to choose the right rule |
-| `globs` | string | Optional. Glob for paths; rule is considered when matching files are in context |
-| `alwaysApply` | boolean | If `true`, rule applies in every chat for this project (use sparingly) |
+|-------|------|---------|
+| `description` | string | One line shown in the rule picker; specific enough to choose the right rule. |
+| `globs` | string | Optional. Path glob; rule is considered when matching files are in context. |
+| `alwaysApply` | boolean | If `true`, the rule is in every chat for this project—use sparingly. |
 
-**Scope rules of thumb**
+**Scope**
 
-- **`alwaysApply: true`**: project-wide norms (style, security mindset, how we ship). Few rules; each must earn its token cost.
-- **`alwaysApply: false` + `globs`**: stack- or area-specific rules (e.g. `**/*.tsx`, `server/**/*.py`). Prefer this over one giant always-on rule.
-- **`alwaysApply: false` and omit `globs` or leave invalid YAML**: confusing or broken—avoid. If the rule is meta (only for editing rules), set e.g. `globs: "**/.cursor/rules/ai-rules/**/*.mdc"`.
-
-**Valid examples**
+- `alwaysApply: true` — project-wide norms (style, security, how we ship). Few rules; each must earn its token cost.
+- `alwaysApply: false` + `globs` — stack- or area-specific rules (`**/*.tsx`, `server/**/*.py`). Prefer this over a giant always-on rule.
+- `alwaysApply: false` and **no** `globs` — confusing; avoid. Meta rules use `globs: "**/.cursor/rules/ai-rules/**/*.mdc"`.
 
 ```yaml
 ---
-description: TypeScript strictness and module boundaries for this repo
+description: TypeScript strictness and module boundaries
 globs: "**/*.{ts,tsx}"
 alwaysApply: false
 ---
 ```
 
-```yaml
----
-description: Release and versioning expectations for maintainers
-alwaysApply: true
----
-```
+## Body
 
-## Body content
+1. **Title**: one `#` heading.
+2. **Bullets > prose** — scannable constraints.
+3. **Examples**: short ❌/✅ snippets only when easy to misread.
+4. **One concern per file**; split if the file grows.
+5. **Length**: aim **under ~50 lines**; if longer, split or link to repo docs.
 
-1. **Title**: one `#` heading stating the topic.
-2. **Bullets over prose**: scannable constraints and preferences.
-3. **Examples**: small ❌/✅ snippets when a rule is easy to misread without them.
-4. **One concern per file**: split “React + API + SQL” into multiple rules with different `globs` instead of one megadoc.
-5. **Length**: aim roughly **under ~50 lines** per rule for model focus; if you need more, consider splitting or linking to repo docs and keeping the rule as a summary + pointer.
+## `description`
 
-## Writing `description`
+- Bad: `Rules` / `Misc` / `Important`.
+- Good: `GraphQL schema naming and pagination for the BFF` / `No PII in logs; redaction checklist`.
 
-- Bad: `Rules` / `Misc` / `Important`
-- Good: `GraphQL schema naming and pagination for the BFF` / `No PII in logs; redaction checklist`
+## `globs`
 
-## Writing `globs`
+- Use explicit roots in monorepos (`apps/web/**/*.tsx` over `**/*.tsx`).
+- Multiple extensions: `**/*.{ts,tsx}` (quote if YAML needs it).
+- Sanity check: "If I only open `foo.rs`, should this rule apply?" If no, don't use a catch-all.
 
-- Prefer explicit roots when it helps: `apps/web/**/*.tsx` vs `**/*.tsx` if the monorepo is large.
-- Multiple extensions: `**/*.{ts,tsx}` (quoted if your YAML parser needs it).
-- Test mentally: “If I only open `foo.rs`, should this rule apply?” If no, do not use a catch-all glob.
+## Before merging a new rule
 
-## Checklist before you merge a new rule
-
-- [ ] File is `PROJECT_ROOT/.cursor/rules/ai-rules/<kebab-case>.mdc`
-- [ ] Frontmatter parses (no dangling `globs:` without a value)
-- [ ] `description` is unique and actionable
-- [ ] Scope is intentional (`alwaysApply` vs `globs`, not both fighting each other without reason)
-- [ ] Examples are minimal and copy-paste realistic for this repo
-- [ ] No duplicate guidance that already exists in another rule (link in prose or consolidate)
+- [ ] Path is `.cursor/rules/ai-rules/<kebab-case>.mdc`.
+- [ ] Frontmatter parses (no dangling `globs:` without a value).
+- [ ] `description` is unique and actionable.
+- [ ] Scope is intentional (`alwaysApply` vs `globs` not fighting).
+- [ ] Examples copy-paste realistic.
+- [ ] No duplicate guidance—link or consolidate instead.
 
 ## Anti-patterns
 
-- Duplicating long specs from `README`—summarize in the rule, detail in docs.
-- Vague “write good code” without concrete checks—prefer measurable guidance.
-- Secrets, credentials, or environment-specific values inside rules (they are versioned like code).
+- Duplicating long specs from `README`—summarize, link details.
+- Vague "write good code" without measurable checks.
+- Secrets or environment values in rules (they're versioned).
 
-## Related project docs
-
-- User- or team-wide editor settings belong in Cursor/VS Code settings, not `.cursor/rules/`.
-- For repository-wide agent instructions outside rule files, some teams use `AGENTS.md` at the repo root; keep `.cursor/rules/` for scoped, file-context-aware guidance.
+User- or team-wide editor settings belong in Cursor/VS Code settings, not `.cursor/rules/`. For broad agent instructions outside rule files, some teams use `AGENTS.md`.

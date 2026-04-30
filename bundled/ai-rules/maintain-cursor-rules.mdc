@@ -1,38 +1,38 @@
 ---
-description: Edit, review quality, deprecate, and document Cursor rules in this repo’s rules folder
+description: Edit, review quality, deprecate, and document Cursor rules in this repo's rules folder
 globs: "**/.cursor/rules/ai-rules/**/*.mdc"
 alwaysApply: false
 ---
 
 # Maintain and update Cursor rules
 
-Applies when changing files under `.cursor/rules/ai-rules/`. Format and placement: [write-cursor-rules-for-this-project.mdc](mdc:.cursor/rules/ai-rules/write-cursor-rules-for-this-project.mdc).
+Applies when changing files under `.cursor/rules/ai-rules/`. For format and placement, see [write-cursor-rules-for-this-project.mdc](mdc:.cursor/rules/ai-rules/write-cursor-rules-for-this-project.mdc).
 
 ## Add a new rule when
 
-- A technology or pattern shows up in roughly **three or more** places and agents should default to it
-- A preventable bug class keeps appearing
-- Reviews repeat the same concrete request
+- A pattern shows up in roughly **3+ places** and agents should default to it.
+- A preventable bug class keeps appearing.
+- Reviews repeat the same concrete request.
 
-## Change an existing rule when
+## Change a rule when
 
-- Better examples exist in the repo than what the rule shows
-- Edge cases or APIs changed and the text is stale
-- Another rule was split or renamed—fix references
+- Better examples exist in the repo than the rule shows.
+- Edge cases or APIs changed and the text is stale.
+- Another rule was split or renamed—fix references.
 
 ## Quality bar
 
-- Actionable bullets, not vague slogans
-- Examples short and realistic; prefer ❌/✅ only when it prevents misreads
-- One main concern per file; split if the file grows hard to scan (~50 lines is a good target)
+- Actionable bullets, not slogans.
+- Examples short and realistic; ❌/✅ only when it prevents misreads.
+- One concern per file; split when the file is hard to scan (~50 lines is a good ceiling).
 
 ## Deprecation
 
-- Mark outdated guidance clearly; remove rules that no longer apply
-- Update links that pointed at renamed or removed rules
-- If behavior changed, add a one-line migration hint when helpful
+- Mark outdated guidance clearly; remove rules that no longer apply.
+- Update links pointing at renamed/removed rules.
+- Add a one-line migration hint when behavior changed.
 
 ## Keep docs in sync
 
-- Examples should match current APIs and folder layout
-- External doc links should still resolve; prefer stable URLs
+- Examples match current APIs and folder layout.
+- External links still resolve; prefer stable URLs.

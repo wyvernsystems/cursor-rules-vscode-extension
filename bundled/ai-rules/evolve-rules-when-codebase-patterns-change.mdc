@@ -5,39 +5,22 @@ alwaysApply: true
 
 # Evolve rules when the codebase patterns change
 
-Use this when writing or reviewing code—not only when editing `.cursor/rules/ai-rules/`.
+Trigger this when **writing or reviewing code**, not only when editing rule files.
 
-## When to consider a rule change
+## Consider a rule change when
 
-- New patterns appear that existing rules do not mention
-- The same implementation shape is copied across several files
-- Recurring bugs or review comments could be prevented with a short standard
-- A library or tool becomes the default in multiple places
-- Security, performance, or testing conventions stabilize
+- A new pattern appears that no rule mentions.
+- The same shape is copied across several files.
+- Recurring bugs or review comments could be prevented with a short standard.
+- A library or tool becomes the default in multiple places.
+- Security, performance, or testing conventions stabilize.
 
-## Analysis habit
+## How
 
-- Compare new or changed code with current rules in `.cursor/rules/ai-rules/`
-- Prefer one focused rule per topic over expanding an unrelated file
-- Pull examples from real repo code when proposing wording
+- Compare new code with current rules in `.cursor/rules/ai-rules/`.
+- Prefer one focused rule per topic; don't bloat unrelated ones.
+- Pull examples from real repo code.
+- Cross-link related rules instead of duplicating paragraphs.
 
-## Example pattern cue
-
-```typescript
-// Repeated shapes like this across files may deserve a scoped rule
-// (e.g. globs for the ORM or API layer), not a giant catch-all:
-const rows = await db.entity.findMany({
-  select: { id: true, status: true },
-  where: { status: 'ACTIVE' },
-});
-```
-
-Document the repeated **select/where/error-handling** conventions in a dedicated `.mdc` next to that layer.
-
-## Continuous signals
-
-- Review feedback and onboarding questions that repeat
-- After large refactors, check whether rules still match how the code works
-- Cross-link related rules instead of duplicating long paragraphs
-
-For **how** to author files (frontmatter, globs, naming), follow [write-cursor-rules-for-this-project.mdc](mdc:.cursor/rules/ai-rules/write-cursor-rules-for-this-project.mdc). For **deprecation, quality bar, and doc sync**, follow [maintain-cursor-rules.mdc](mdc:.cursor/rules/ai-rules/maintain-cursor-rules.mdc).
+For **how** to author rule files, see [write-cursor-rules-for-this-project.mdc](mdc:.cursor/rules/ai-rules/write-cursor-rules-for-this-project.mdc).
+For **deprecation, quality, and doc sync**, see [maintain-cursor-rules.mdc](mdc:.cursor/rules/ai-rules/maintain-cursor-rules.mdc).

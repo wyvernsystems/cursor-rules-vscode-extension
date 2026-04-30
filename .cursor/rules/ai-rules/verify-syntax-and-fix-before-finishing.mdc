@@ -5,20 +5,20 @@ alwaysApply: true
 
 # Verify syntax and fix before finishing
 
-Before you treat a coding task as **done** (especially after edits, new files, or refactors), **double-check** for syntax and static issues in the files you touched.
+Before declaring a coding task done, double-check the files you touched.
 
-## What to do
+## Do
 
-1. **Re-read** the changed regions for mismatched brackets, quotes, JSX/HTML tags, imports, and obvious typos.
-2. **Run or consult** the project’s normal quality signals when available: build, `tsc`/typecheck, formatter/linter, or IDE diagnostics—use the same tools the repo already uses in `package.json` / CI / docs.
-3. **Fix** issues you introduced or that block correctness; do not leave known syntax/type errors in delivered code.
-4. If a reported error is **pre-existing** and outside your change, say so briefly and avoid widening scope unless the user asked.
+1. **Re-read** changed regions for mismatched brackets/quotes/JSX tags, bad imports, and obvious typos.
+2. **Run repo signals** when available: build, `tsc`/typecheck, formatter, linter, or IDE diagnostics—use what the repo already uses.
+3. **Fix** issues you introduced or that block correctness.
+4. If an error is **pre-existing**, say so briefly and don't widen scope unless asked.
 
 ## When tools are unavailable
 
-- Still do a careful pass on structure (balanced delimiters, valid imports, plausible API usage) before concluding.
+- Pass over delimiters, imports, and plausible API usage before concluding.
 
-## Do not
+## Don't
 
-- Silence linters with blanket disables without a narrow reason and user alignment.
-- Claim “no errors” without having checked at least the edited files when checks are available.
+- Silence linters with blanket disables without a narrow reason.
+- Claim "no errors" without checking the edited files when checks exist.

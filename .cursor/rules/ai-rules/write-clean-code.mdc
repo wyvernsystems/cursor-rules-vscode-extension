@@ -5,21 +5,20 @@ alwaysApply: true
 
 # Write clean, maintainable code
 
-- **Names**: Prefer intention-revealing names over comments that explain obscurity. Avoid abbreviations unless they are universal in the domain.
-- **Functions**: One clear responsibility; keep them short enough to read without scrolling. Prefer early returns over deep nesting.
-- **Comments**: Explain *why* (constraints, tradeoffs, non-obvious invariants), not *what* the code already says.
-- **Dependencies**: Inject or pass explicit parameters instead of hidden globals. Prefer narrow interfaces over wide ones.
-- **Errors**: Fail fast with useful context; do not swallow exceptions or return ambiguous sentinel values without documenting them.
-- **Duplication**: Extract when the same idea appears three times or when a change would require touching many places—avoid premature abstraction.
+- **Names**: intention-revealing; no abbreviations unless universal in the domain.
+- **Functions**: one responsibility; short; early returns over deep nesting.
+- **Comments**: explain *why*, not *what*.
+- **Dependencies**: pass explicit parameters; avoid hidden globals; narrow interfaces.
+- **Errors**: fail fast with context; don't swallow exceptions or return ambiguous sentinels.
+- **Duplication**: extract on the third repetition; avoid premature abstraction.
 
 ```typescript
-// ❌ BAD: vague name, magic value
+// ❌ vague name, magic value
 function proc(d: Data) {
   if (d.x > 100) return null;
-  // ...
 }
 
-// ✅ GOOD: named concept, explicit outcome
+// ✅ named concept, explicit outcome
 function isEligibleForDiscount(order: Order): boolean {
   const MIN_ORDER_CENTS = 100_00;
   return order.subtotalCents >= MIN_ORDER_CENTS;

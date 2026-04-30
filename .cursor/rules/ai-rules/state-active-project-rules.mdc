@@ -1,47 +1,44 @@
 ---
-description: REQUIRED — first substantive reply must include ### Active project rules so the user sees which pack rules apply
+description: REQUIRED — first substantive reply must include "### Active project rules" so the user sees which rules apply
 alwaysApply: true
 ---
 
-# State which project rules apply when a chat begins
+# State which project rules apply
 
-Cursor injects project rules from **`.cursor/rules/ai-rules/*.mdc`**. This file is **`alwaysApply: true`**, so it should be in context whenever that pack is installed and not renamed to **`.mdc.disabled`**.
+Cursor injects rules from `.cursor/rules/ai-rules/`. Advertise which ones apply at the start of a chat so the user can verify.
 
-## Non-negotiable (user-visible)
+## Mandatory output
 
-For the **first assistant message in this chat** that responds to the user’s prompt (not a hidden tool-only step), you **must** put the following **at the very top** of the markdown you show the user—before explanations, plans, or code. You may use **one short sentence** (≤ 20 words) before it only if you are acknowledging the request.
+In your **first substantive reply** of a new chat or fresh agent run, before any explanation, plan, or code, include this exact section. Copy it verbatim, then add glob-scoped or @-mentioned rows below if relevant.
 
-Use this **exact** heading (three hashes, exact spelling):
-
+```markdown
 ### Active project rules
+- **`state-active-project-rules.mdc`** — announces active rules at the start of a chat.
+- **`write-clean-code.mdc`** — readable, maintainable code defaults.
+- **`reuse-code-before-duplicating.mdc`** — search and extract before duplicating.
+- **`organize-repository-by-feature.mdc`** — feature-first folder layout.
+- **`secure-code-data-and-dependencies.mdc`** — secure-by-default coding.
+- **`prefer-lts-stable-runtimes-and-libraries.mdc`** — LTS / stable versions only.
+- **`update-changelog-for-notable-changes.mdc`** — keep `CHANGELOG.md` current.
+- **`append-and-deduplicate-requirements.mdc`** — capture and dedupe requirements.
+- **`verify-syntax-and-fix-before-finishing.mdc`** — verify before finishing.
+- **`remove-dead-code-and-unused-files.mdc`** — remove dead code safely.
+- **`evolve-rules-when-codebase-patterns-change.mdc`** — evolve rules with the code.
+```
 
-Immediately under that heading, add a **compact bullet list**. Each bullet must be:
+## Add to the list when relevant
 
-`- **`filename.mdc`** — one short phrase (from its `description` or obvious purpose).`
+- **Glob-scoped rules** whose `globs` match the open files or task:
+  - Markdown work → `use-this-format-for-markdown-files.mdc`
+  - Editing `ai-rules` files → `write-cursor-rules-for-this-project.mdc`, `maintain-cursor-rules.mdc`
+- **@-mentioned** rules.
 
-**Minimum rows** (skip a row only if that rule is clearly disabled, e.g. only `*.mdc.disabled` exists and no active `.mdc`):
+## Skip a row only when
 
-- `state-active-project-rules.mdc`
-- `write-clean-code.mdc`
-- `reuse-code-before-duplicating.mdc`
-- `organize-repository-by-feature.mdc`
-- `secure-code-data-and-dependencies.mdc`
-- `prefer-lts-stable-runtimes-and-libraries.mdc`
-- `update-changelog-for-notable-changes.mdc`
-- `append-and-deduplicate-requirements.mdc`
-- `verify-syntax-and-fix-before-finishing.mdc`
-- `remove-dead-code-and-unused-files.mdc`
+- That rule is disabled on disk (e.g. `*.mdc.disabled`) and no active `.mdc` exists.
 
-Also list **`evolve-rules-when-codebase-patterns-change.mdc`** only if it is active (not stored as `.mdc.disabled`).
+## When to repeat
 
-Add **glob-scoped** rules from this folder when the user’s open files, attachments, or task clearly match their `globs` (e.g. Markdown work → `use-this-format-for-markdown-files.mdc`; editing rules under `ai-rules` → `write-cursor-rules-for-this-project.mdc`, `maintain-cursor-rules.mdc`).
+Print the section once per chat. Repeat when the user starts a clearly new topic, a fresh agent run, or asks which rules apply. Skip on tool-only or trivial follow-up turns.
 
-Add any rule the user **@-mentioned**.
-
-If you are unsure which glob rules apply, say so in **one** short line after the list—do not skip the list.
-
-## Later messages in the same chat
-
-Do **not** repeat the full block on every back-and-forth. Repeat it when the user starts a **clearly new** topic, a **new Agent/Composer run**, or asks what rules apply.
-
-Keep the list **short**—filenames and phrases only, not full rule bodies.
+You may put one short sentence (≤ 20 words) acknowledging the request **before** the heading, but nothing else above it.
