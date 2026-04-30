@@ -87,12 +87,11 @@ export class RulesTreeProvider implements vscode.TreeDataProvider<Node> {
   private readonly mdcs: readonly string[];
   private readonly folders: readonly string[];
   /**
-   * Optional decoration provider whose color decorations also need to refresh
-   * whenever rule on / off state changes. Wiring it in here keeps every
-   * existing `treeProvider.refresh()` call site correct without forcing
-   * callers to know about decorations.
+   * Callbacks fired after every tree refresh. Lets sibling decoration
+   * providers (sidebar colors, Explorer colors) re-publish without each
+   * call site having to know about them.
    */
-  private decorations?: RuleStatusDecorationProvider;
+  private readonly afterRefresh: Array<() => void> = [];
 
   constructor(manifest: BundleManifest) {
     this.mdcs = manifest.files.filter((f) => f.endsWith(".mdc"));
@@ -106,13 +105,15 @@ export class RulesTreeProvider implements vscode.TreeDataProvider<Node> {
     this.folders = [...seen].sort();
   }
 
-  setDecorationProvider(decorations: RuleStatusDecorationProvider): void {
-    this.decorations = decorations;
+  onAfterRefresh(cb: () => void): void {
+    this.afterRefresh.push(cb);
   }
 
   refresh(): void {
     this._onDidChange.fire(undefined);
-    this.decorations?.refresh();
+    for (const cb of this.afterRefresh) {
+      cb();
+    }
   }
 
   getTreeItem(node: Node): Promise<vscode.TreeItem> {

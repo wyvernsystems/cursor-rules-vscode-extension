@@ -31,6 +31,7 @@ import {
   workspaceRulesDir,
 } from "./rulesOperations";
 import { assertContainedPath, isSafeManifestEntry } from "./safePaths";
+import { COLOR_RULES_IN_EXPLORER_SETTING, WorkspaceRuleFileColorer } from "./explorerDecorations";
 import {
   bindRulesTreeView,
   RuleStatusDecorationProvider,
@@ -67,16 +68,25 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const rulesOutput = createAiRulesOutputChannel();
   context.subscriptions.push(rulesOutput);
 
-  const decorationProvider = new RuleStatusDecorationProvider();
+  const sidebarColors = new RuleStatusDecorationProvider();
+  const explorerColors = new WorkspaceRuleFileColorer();
   context.subscriptions.push(
-    vscode.window.registerFileDecorationProvider(decorationProvider)
+    vscode.window.registerFileDecorationProvider(sidebarColors),
+    vscode.window.registerFileDecorationProvider(explorerColors),
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration(COLOR_RULES_IN_EXPLORER_SETTING)) {
+        explorerColors.refresh();
+      }
+    })
   );
+
   const treeProvider = new RulesTreeProvider(manifest);
-  treeProvider.setDecorationProvider(decorationProvider);
+  treeProvider.onAfterRefresh(() => sidebarColors.refresh());
+  treeProvider.onAfterRefresh(() => explorerColors.refresh());
   /**
    * Refresh handle used after every action that changes rule state on disk.
-   * `treeProvider.refresh()` also fires decoration refresh internally, so
-   * call sites only need to refresh the tree.
+   * `treeProvider.refresh()` also fires every registered decoration provider
+   * via `onAfterRefresh`, so call sites only need to refresh the tree.
    */
   const refreshSidebar = (): Promise<void> => {
     treeProvider.refresh();

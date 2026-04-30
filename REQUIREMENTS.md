@@ -17,6 +17,10 @@ details belong in the code or in the rule files.
 - The sidebar tree view colors active rule labels green and disabled rule
   labels muted gray (via a `FileDecorationProvider`) so on / off state is
   visible without reading the description column.
+- The same color scheme is applied to rule files in VS Code's built-in
+  Explorer for any `<name>.mdc` / `<name>.mdc.disabled` under
+  `.cursor/rules/ai-rules/` in the open workspace. Gated by
+  `aiRules.colorRulesInExplorer` (default `true`).
 - Source of truth for rule text is `.cursor/rules/ai-rules/`. The VSIX ships
   a byte-identical copy under `bundled/ai-rules/`. `npm run verify:bundled`
   must pass before packaging.

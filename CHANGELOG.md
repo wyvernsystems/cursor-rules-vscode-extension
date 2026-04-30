@@ -6,6 +6,31 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-04-29
+
+### Added
+
+- **Explorer file-name coloring.** A new `WorkspaceRuleFileColorer`
+  (`vscode.FileDecorationProvider`) tints `.mdc` files green and
+  `.mdc.disabled` files muted gray in VS Code's built-in Explorer (and
+  any other view that renders real `file://` URIs), for any rule under
+  `.cursor/rules/ai-rules/` in the open workspace. Sibling to the existing
+  sidebar tree decoration, which uses synthetic URIs.
+- New setting `aiRules.colorRulesInExplorer` (default `true`) opts out of
+  the Explorer coloring without affecting the AI Rules sidebar.
+- Listening for `onDidChangeConfiguration` so flipping the setting
+  re-publishes decorations without a reload.
+
+### Changed
+
+- **Renamed command** `AI Rules: Show pack status (green = active)` →
+  `AI Rules: Show active rules (green = active)`. Command ID stays
+  `aiRules.showPackStatus` so existing keybindings keep working. README,
+  sidebar overflow menu, and changelog references updated.
+- `RulesTreeProvider` now exposes a generic `onAfterRefresh(cb)` hook (used
+  by both decoration providers) instead of the previous one-off
+  `setDecorationProvider` setter.
+
 ## [0.4.0] - 2026-04-29
 
 ### Added

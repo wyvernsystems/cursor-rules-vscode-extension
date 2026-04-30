@@ -71,15 +71,23 @@ What you can do from the sidebar:
 
 | Where | Action |
 |-------|--------|
-| Title bar buttons (top of the view) | One-click **Mode — Plan / Build / Test / Role…** presets, plus a **Refresh** icon. The overflow menu (`…`) holds bulk actions: Enable all, Disable all, Install / update, Reset, Show pack status. |
+| Title bar buttons (top of the view) | One-click **Mode — Plan / Build / Test / Role…** presets, plus a **Refresh** icon. The overflow menu (`…`) holds bulk actions: Enable all, Disable all, Install / update, Reset, Show active rules. |
 | **Folder row** (e.g. `coding-rules/`) | Right-click → **Enable every rule in this folder** or **Disable every rule in this folder**. Inline check-all / close-all icons appear on hover. |
 | **Rule row checkbox** | Click the checkbox to flip the rule on / off (renames `<name>.mdc` ↔ `<name>.mdc.disabled`). |
 | **Rule row label** | Click the rule name to open the `.mdc` file in the editor. |
-| **`Show pack status` command** | Opens / focuses the sidebar so you can scan the colored on / off state, and writes a plain-text snapshot to **Output → AI Rules** for logging. |
+| **`Show active rules` command** | Opens / focuses the sidebar so you can scan the colored on / off state, and writes a plain-text snapshot to **Output → AI Rules** for logging. |
 
 Switching modes from the sidebar buttons only flips role and test rules —
 your always-on coding, documentation, and meta rules stay enabled. Manual
 changes you make via the checkboxes always win until the next mode switch.
+
+### Same colors in the workbench Explorer
+
+The same color scheme also applies to rule files in VS Code's built-in
+**Explorer** view: any `<name>.mdc` under `.cursor/rules/ai-rules/` shows up
+green, and any `<name>.mdc.disabled` shows up muted gray. So you can browse
+your rules folder like a normal folder and still see at a glance which rules
+are active. Set `aiRules.colorRulesInExplorer` to `false` to opt out.
 
 ## All commands
 
@@ -127,7 +135,7 @@ storage. You can populate it once and then push it into any project.
 
 | Command | Plain English |
 |---------|---------------|
-| Show pack status (green = active) | Focuses the AI Rules sidebar so you can see the colored on / off state, and writes a plain-text snapshot of the same info to **Output → AI Rules**. |
+| Show active rules (green = active) | Focuses the AI Rules sidebar so you can see the colored on / off state, and writes a plain-text snapshot of the same info to **Output → AI Rules**. |
 | Refresh sidebar | Re-reads the rules folder from disk and redraws the sidebar tree. |
 | Open rule file | Opens a specific `.mdc` in the editor (used by the sidebar tree). |
 
@@ -152,6 +160,7 @@ the command palette.
 | Setting | Default | Effect |
 |---------|---------|--------|
 | `aiRules.autoInstallOnOpenWorkspace` | `true` | When you open a workspace that has no `.cursor/rules/ai-rules/` folder yet, install the bundled rule pack automatically. Never overwrites an existing folder. |
+| `aiRules.colorRulesInExplorer` | `true` | Tint rule files in VS Code's Explorer: `.mdc` (active) appears green and `.mdc.disabled` (off) appears muted gray, anywhere under `.cursor/rules/ai-rules/`. |
 | `aiRules.promptInstallOnUpdate` | `true` | When the extension version changes, ask whether to refresh workspace rules from the bundled copy. |
 | `aiRules.autoSyncClineWhenInstalled` | `true` | If Cline is installed, also mirror bundled `.mdc` rules into `.clinerules/ai-rules/` whenever rules change. |
 
