@@ -14,6 +14,7 @@ When **Cline** is installed (`saoudrizwan.claude-dev` or `saoudrizwan.cline-nigh
 | **Enable / disable all rules (workspace)** | Renames every bundled `.mdc` between active and `.mdc.disabled`. |
 | **Enable / disable all rules (global mirror)** | Copies or removes rules under the extension’s **global storage** mirror. |
 | **Copy global mirror into workspace** | Pushes the mirror into the workspace rules folder; may auto-sync Cline. |
+| **Show pack status (green = active)** | Opens the **Output → AI Rules** channel: active rules in **green** (ANSI), disabled in dim text. Runs automatically after install/toggle/reset when relevant. |
 | **Sync bundled rules to Cline** | Manual mirror to `.clinerules/ai-rules/`. |
 | **Enable or disable a single rule…** | Quick pick to toggle one `.mdc`. |
 | **Reset workspace rules folder to defaults…** | Replaces from bundle, deletes extra files, evolve off again; may auto-sync Cline. |

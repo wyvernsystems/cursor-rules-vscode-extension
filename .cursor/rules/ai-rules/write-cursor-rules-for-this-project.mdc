@@ -32,6 +32,7 @@ Suggested layout:
     ├── update-changelog-for-notable-changes.mdc
     ├── append-and-deduplicate-requirements.mdc
     ├── verify-syntax-and-fix-before-finishing.mdc
+    ├── remove-dead-code-and-unused-files.mdc
     └── domain-specific-thing.mdc
 ```
 

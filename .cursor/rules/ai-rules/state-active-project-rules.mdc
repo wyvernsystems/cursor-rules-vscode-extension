@@ -30,6 +30,7 @@ Immediately under that heading, add a **compact bullet list**. Each bullet must 
 - `update-changelog-for-notable-changes.mdc`
 - `append-and-deduplicate-requirements.mdc`
 - `verify-syntax-and-fix-before-finishing.mdc`
+- `remove-dead-code-and-unused-files.mdc`
 
 Also list **`evolve-rules-when-codebase-patterns-change.mdc`** only if it is active (not stored as `.mdc.disabled`).
 

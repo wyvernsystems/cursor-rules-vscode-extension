@@ -60,6 +60,11 @@
         "category": "AI Rules"
       },
       {
+        "command": "aiRules.showPackStatus",
+        "title": "AI Rules: Show pack status (green = active)",
+        "category": "AI Rules"
+      },
+      {
         "command": "aiRules.toggleIndividualRule",
         "title": "AI Rules: Enable or disable a single rule…",
         "category": "AI Rules"

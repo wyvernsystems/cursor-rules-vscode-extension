@@ -23,6 +23,7 @@ Cursor **project rules** are Markdown files with optional YAML **frontmatter**, 
 | `update-changelog-for-notable-changes.mdc` | **Always** (`alwaysApply: true`). | Prompts updates to `CHANGELOG.md` for user-visible or release-worthy changes using a sensible Keep-a-Changelog style. |
 | `append-and-deduplicate-requirements.mdc` | **Always** (`alwaysApply: true`). | Adds stated requirements to `REQUIREMENTS.md` (or `docs/REQUIREMENTS.md`), merges near-duplicates, and keeps the list consolidated. |
 | `verify-syntax-and-fix-before-finishing.mdc` | **Always** (`alwaysApply: true`). | Before finishing coding work, re-checks touched files for syntax/type issues and fixes problems the agent can address. |
+| `remove-dead-code-and-unused-files.mdc` | **Always** (`alwaysApply: true`). | Looks for unused code and orphan files after changes; removes only when clearly safe and confirms ambiguous deletes with the user. |
 
 For VS Code UI settings bundled with this workspace, see **`.vscode/settings.json`** at the repo root (that file is not a Cursor rule).
 

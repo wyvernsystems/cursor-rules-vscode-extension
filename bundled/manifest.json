@@ -7,6 +7,7 @@
     "maintain-cursor-rules.mdc",
     "organize-repository-by-feature.mdc",
     "prefer-lts-stable-runtimes-and-libraries.mdc",
+    "remove-dead-code-and-unused-files.mdc",
     "reuse-code-before-duplicating.mdc",
     "secure-code-data-and-dependencies.mdc",
     "state-active-project-rules.mdc",
