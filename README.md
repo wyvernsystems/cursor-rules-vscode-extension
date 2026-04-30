@@ -87,7 +87,10 @@ The same color scheme also applies to rule files in VS Code's built-in
 **Explorer** view: any `<name>.mdc` under `.cursor/rules/ai-rules/` shows up
 green, and any `<name>.mdc.disabled` shows up muted gray. So you can browse
 your rules folder like a normal folder and still see at a glance which rules
-are active. Set `aiRules.colorRulesInExplorer` to `false` to opt out.
+are active. Set `aiRules.colorRulesInExplorer` to `false` (or run **`AI
+Rules: Hide active rules`**) to opt out; **`AI Rules: Show active rules`**
+turns it back on. The sidebar tree always shows on / off colors regardless
+of this setting.
 
 ## All commands
 
@@ -135,7 +138,8 @@ storage. You can populate it once and then push it into any project.
 
 | Command | Plain English |
 |---------|---------------|
-| Show active rules (green = active) | Focuses the AI Rules sidebar so you can see the colored on / off state, and writes a plain-text snapshot of the same info to **Output → AI Rules**. |
+| Show active rules (green = active) | Turns the Explorer green tint on (if you'd hidden it), focuses the AI Rules sidebar, and writes a plain-text snapshot to **Output → AI Rules**. |
+| Hide active rules (no green) | Turns the Explorer green tint off (sets `aiRules.colorRulesInExplorer` to `false` at the user level). The sidebar tree's colors are unaffected. |
 | Refresh sidebar | Re-reads the rules folder from disk and redraws the sidebar tree. |
 | Open rule file | Opens a specific `.mdc` in the editor (used by the sidebar tree). |
 

@@ -2,7 +2,7 @@
   "name": "ai-rules",
   "displayName": "AI Rules",
   "description": "Install and manage Wyvern AI agent project rules under .cursor/rules/ai-rules (Cursor) with optional Cline sync to .clinerules/ai-rules/.",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "publisher": "wyvernsystems",
   "license": "MIT",
   "icon": "icon.png",
@@ -76,6 +76,11 @@
       {
         "command": "aiRules.showPackStatus",
         "title": "AI Rules: Show active rules (green = active)",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.hideActiveRules",
+        "title": "AI Rules: Hide active rules (no green)",
         "category": "AI Rules"
       },
       {
@@ -202,6 +207,11 @@
           "command": "aiRules.showPackStatus",
           "when": "view == aiRules.rulesTree",
           "group": "3_inspect@1"
+        },
+        {
+          "command": "aiRules.hideActiveRules",
+          "when": "view == aiRules.rulesTree",
+          "group": "3_inspect@2"
         }
       ],
       "view/item/context": [

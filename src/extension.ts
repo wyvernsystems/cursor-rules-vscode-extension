@@ -265,11 +265,34 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     treeProvider.refresh();
   });
 
+  /**
+   * Symmetric pair with `aiRules.hideActiveRules`: turns the Explorer green
+   * tint back on (idempotent—no-op if already on), refreshes the sidebar,
+   * focuses it, and writes a plain-text snapshot to the Output channel.
+   */
   register("aiRules.showPackStatus", async () => {
     const root = ensureWorkspace();
+    const cfg = vscode.workspace.getConfiguration("aiRules");
+    if (cfg.get<boolean>("colorRulesInExplorer", true) !== true) {
+      await cfg.update("colorRulesInExplorer", true, vscode.ConfigurationTarget.Global);
+    }
     treeProvider.refresh();
     await vscode.commands.executeCommand(`${RULES_TREE_VIEW_ID}.focus`);
     await showPackStatusInOutput(rulesOutput, workspaceRulesDir(root), mdcs);
+  });
+
+  /**
+   * Removes the green / muted-gray tint from rule files in the workbench
+   * Explorer by flipping `aiRules.colorRulesInExplorer` to `false` at the
+   * Global scope. Sidebar coloring is unaffected—the sidebar exists to show
+   * on/off state, so removing color there would defeat its purpose.
+   */
+  register("aiRules.hideActiveRules", async () => {
+    const cfg = vscode.workspace.getConfiguration("aiRules");
+    await cfg.update("colorRulesInExplorer", false, vscode.ConfigurationTarget.Global);
+    vscode.window.showInformationMessage(
+      "AI Rules: Explorer rule colors hidden. Run “AI Rules: Show active rules” to bring them back."
+    );
   });
 
   register("aiRules.syncClineWorkspace", async () => {

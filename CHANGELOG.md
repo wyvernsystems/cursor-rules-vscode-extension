@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-04-29
+
+First **stable** release. Marketplace listing, packaging, and rule pack
+considered ready for general use. No breaking changes versus 0.5.0—command
+IDs, settings, and on-disk format are stable.
+
+### Added
+
+- **`AI Rules: Hide active rules (no green)`** command. Sets
+  `aiRules.colorRulesInExplorer` to `false` at the User scope so the green
+  / muted tint disappears from the workbench Explorer. The AI Rules
+  sidebar tree's colors are deliberately unaffected—the sidebar exists to
+  surface on / off state, so removing color there would defeat its
+  purpose.
+- The companion `AI Rules: Show active rules` command now also flips
+  `aiRules.colorRulesInExplorer` back to `true` (idempotent—no-op if
+  already on) so the pair behaves symmetrically.
+- Both commands are surfaced in the sidebar title-bar overflow menu under
+  the **Inspect** group.
+
 ## [0.5.0] - 2026-04-29
 
 ### Added

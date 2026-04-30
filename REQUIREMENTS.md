@@ -21,6 +21,13 @@ details belong in the code or in the rule files.
   Explorer for any `<name>.mdc` / `<name>.mdc.disabled` under
   `.cursor/rules/ai-rules/` in the open workspace. Gated by
   `aiRules.colorRulesInExplorer` (default `true`).
+- A pair of commands toggles the Explorer tint at the User scope without
+  touching the sidebar:
+  - `AI Rules: Hide active rules (no green)` sets
+    `aiRules.colorRulesInExplorer` to `false`.
+  - `AI Rules: Show active rules (green = active)` sets it back to `true`
+    (idempotent), focuses the sidebar, and writes a plain-text snapshot to
+    the Output channel.
 - Source of truth for rule text is `.cursor/rules/ai-rules/`. The VSIX ships
   a byte-identical copy under `bundled/ai-rules/`. `npm run verify:bundled`
   must pass before packaging.
