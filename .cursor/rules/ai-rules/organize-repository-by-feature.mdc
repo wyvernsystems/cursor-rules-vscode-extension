@@ -1,0 +1,32 @@
+---
+description: Keep the repository structure clean, predictable, and feature-oriented
+alwaysApply: true
+---
+
+# Organize the repository by feature and convention
+
+- **Predictable layout**: New files go where similar files already live. If nothing fits, propose a folder rather than dropping files at the root.
+- **Feature-first**: Group by feature/domain (e.g. `src/features/billing/`) over generic buckets (`src/everything/`). Generic folders like `utils/` or `components/` should hold cross-feature code only.
+- **One purpose per folder**: A directory should answer “what lives here?” in one short sentence. Split when the answer becomes a list.
+- **Stable boundaries**: Public entry points (e.g. `index.ts`, `mod.rs`, `__init__.py`) re-export the intended API. Cross-feature imports go through these, not deep paths.
+- **Naming**: Use kebab-case for filenames unless the language ecosystem dictates otherwise (e.g. PascalCase React components, snake_case Python modules). Be consistent within a folder.
+- **No junk in root**: Keep the repo root for top-level configs, `README`, `LICENSE`, and tooling. Avoid dumping scripts, scratch files, or one-off notes there.
+- **Tests live next to code**: Either colocate (`foo.ts` + `foo.test.ts`) or mirror under `tests/`—pick one and stick to it.
+- **Delete dead paths**: Remove unused folders, generated artifacts, and commented-out modules; add them to `.gitignore` instead of versioning them.
+
+```text
+# ✅ GOOD: feature-first, clear boundaries
+src/
+├── features/
+│   ├── billing/
+│   │   ├── api.ts
+│   │   ├── billing.test.ts
+│   │   └── index.ts
+│   └── auth/
+│       ├── login.ts
+│       └── index.ts
+├── shared/
+│   ├── http.ts
+│   └── logger.ts
+└── index.ts
+```

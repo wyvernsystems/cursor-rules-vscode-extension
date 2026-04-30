@@ -1,35 +1,41 @@
 ---
 description: Author and maintain Cursor project rules—location, frontmatter, scope, and quality bar
-globs: "**/.cursor/rules/cursor-rules-vscode-extension/**/*.mdc"
+globs: "**/.cursor/rules/ai-rules/**/*.mdc"
 alwaysApply: false
 ---
 
 # Write Cursor rules for this project
 
-Project rules for this repository live under `.cursor/rules/cursor-rules-vscode-extension/` as `.mdc` files (Markdown with YAML frontmatter). They steer the AI toward consistent behavior; treat them like short internal playbooks, not essays.
+Project rules for this repository live under `.cursor/rules/ai-rules/` as `.mdc` files (Markdown with YAML frontmatter). They steer the AI toward consistent behavior; treat them like short internal playbooks, not essays.
 
 ## Where files go
 
-- **Do**: `PROJECT_ROOT/.cursor/rules/cursor-rules-vscode-extension/<name>.mdc` (folder name matches the repo)
+- **Do**: `PROJECT_ROOT/.cursor/rules/ai-rules/<name>.mdc` (this pack uses the folder name **`ai-rules`**)
 - **Do not**: project root, `docs/`, package folders, or any path outside `.cursor/rules/`
 
 Suggested layout:
 
 ```text
 .cursor/rules/
-└── cursor-rules-vscode-extension/
-    ├── README.md
+└── ai-rules/
+    ├── ABOUT_RULES.md
     ├── state-active-project-rules.mdc
-    ├── how-to-write-rules.mdc
-    ├── evolving-project-rules.mdc
-    ├── cursor-rules-maintenance.mdc
+    ├── write-cursor-rules-for-this-project.mdc
+    ├── maintain-cursor-rules.mdc
+    ├── evolve-rules-when-codebase-patterns-change.mdc
     ├── write-clean-code.mdc
+    ├── reuse-code-before-duplicating.mdc
+    ├── organize-repository-by-feature.mdc
+    ├── secure-code-data-and-dependencies.mdc
+    ├── prefer-lts-stable-runtimes-and-libraries.mdc
+    ├── use-this-format-for-markdown-files.mdc
     └── domain-specific-thing.mdc
 ```
 
 ## Filenames
 
 - **kebab-case**: `api-error-handling.mdc`, not `ApiRules.mdc`
+- **Verb-first** when practical so intent is obvious from the filename (e.g. `state-active-project-rules.mdc`, `use-this-format-for-markdown-files.mdc`).
 - **Extension**: always `.mdc`
 - **Name**: describes the single topic (agents use `description` for nuance; the filename is for humans and search)
 
@@ -47,7 +53,7 @@ Every rule starts with YAML between `---` lines. Fields Cursor uses:
 
 - **`alwaysApply: true`**: project-wide norms (style, security mindset, how we ship). Few rules; each must earn its token cost.
 - **`alwaysApply: false` + `globs`**: stack- or area-specific rules (e.g. `**/*.tsx`, `server/**/*.py`). Prefer this over one giant always-on rule.
-- **`alwaysApply: false` and omit `globs` or leave invalid YAML**: confusing or broken—avoid. If the rule is meta (only for editing rules), set e.g. `globs: "**/.cursor/rules/cursor-rules-vscode-extension/**/*.mdc"`.
+- **`alwaysApply: false` and omit `globs` or leave invalid YAML**: confusing or broken—avoid. If the rule is meta (only for editing rules), set e.g. `globs: "**/.cursor/rules/ai-rules/**/*.mdc"`.
 
 **Valid examples**
 
@@ -87,7 +93,7 @@ alwaysApply: true
 
 ## Checklist before you merge a new rule
 
-- [ ] File is `PROJECT_ROOT/.cursor/rules/cursor-rules-vscode-extension/<kebab-case>.mdc`
+- [ ] File is `PROJECT_ROOT/.cursor/rules/ai-rules/<kebab-case>.mdc`
 - [ ] Frontmatter parses (no dangling `globs:` without a value)
 - [ ] `description` is unique and actionable
 - [ ] Scope is intentional (`alwaysApply` vs `globs`, not both fighting each other without reason)

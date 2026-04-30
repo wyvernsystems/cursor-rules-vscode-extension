@@ -5,7 +5,7 @@ alwaysApply: true
 
 # State which project rules apply when a chat begins
 
-Cursor loads project rules from `.cursor/rules/` (here: `.cursor/rules/cursor-rules-vscode-extension/*.mdc`). Each rule’s frontmatter sets **when** it applies (`alwaysApply: true`, or `globs` when matching files are in context, or when the user @-mentions a rule).
+Cursor loads project rules from `.cursor/rules/` (here: `.cursor/rules/ai-rules/*.mdc`). Each rule’s frontmatter sets **when** it applies (`alwaysApply: true`, or `globs` when matching files are in context, or when the user @-mentions a rule).
 
 ## What to tell the user
 

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "files": [
+    "ABOUT_RULES.md",
+    "evolve-rules-when-codebase-patterns-change.mdc",
+    "maintain-cursor-rules.mdc",
+    "organize-repository-by-feature.mdc",
+    "prefer-lts-stable-runtimes-and-libraries.mdc",
+    "reuse-code-before-duplicating.mdc",
+    "secure-code-data-and-dependencies.mdc",
+    "state-active-project-rules.mdc",
+    "use-this-format-for-markdown-files.mdc",
+    "write-clean-code.mdc",
+    "write-cursor-rules-for-this-project.mdc"
+  ]
+}

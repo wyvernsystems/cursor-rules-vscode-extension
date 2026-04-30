@@ -1,0 +1,102 @@
+{
+  "name": "wyvern-ai-rules",
+  "displayName": "AI Rules",
+  "description": "Install and manage Wyvern AI agent project rules under .cursor/rules/ai-rules (Cursor) with optional Cline sync to .clinerules/ai-rules/.",
+  "version": "0.1.0",
+  "publisher": "wyvernsystems",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wyvernsystems/cursor-rules-vscode-extension"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "files": [
+    "out",
+    "bundled"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "aiRules.installWorkspace",
+        "title": "AI Rules: Install / update rules in workspace",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.enableAllWorkspace",
+        "title": "AI Rules: Enable all rules (workspace)",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.disableAllWorkspace",
+        "title": "AI Rules: Disable all rules (workspace)",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.enableAllGlobal",
+        "title": "AI Rules: Enable all rules (global mirror)",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.disableAllGlobal",
+        "title": "AI Rules: Disable all rules (global mirror)",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.applyGlobalToWorkspace",
+        "title": "AI Rules: Copy global mirror into workspace",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.syncClineWorkspace",
+        "title": "AI Rules: Sync bundled rules to Cline (.clinerules/ai-rules)",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.toggleIndividualRule",
+        "title": "AI Rules: Enable or disable a single rule…",
+        "category": "AI Rules"
+      },
+      {
+        "command": "aiRules.resetWorkspaceRulesToDefaults",
+        "title": "AI Rules: Reset workspace rules folder to defaults…",
+        "category": "AI Rules"
+      }
+    ],
+    "configuration": {
+      "title": "AI Rules",
+      "properties": {
+        "aiRules.promptInstallOnUpdate": {
+          "type": "boolean",
+          "default": true,
+          "description": "When the extension version changes, offer to refresh workspace rules from the bundled copy."
+        },
+        "aiRules.autoSyncClineWhenInstalled": {
+          "type": "boolean",
+          "default": true,
+          "description": "When Cline is installed, automatically mirror bundled .mdc rules into .clinerules/ai-rules/ after install / reset / copy-from-global (and when Cline is first detected)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "sync-bundled": "node scripts/sync-bundled.mjs",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run sync-bundled && npm run compile",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.4.0"
+  }
+}

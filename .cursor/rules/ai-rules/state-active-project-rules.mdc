@@ -1,0 +1,20 @@
+---
+description: Tell the user which project rules apply at the start of a new chat or agent run
+alwaysApply: true
+---
+
+# State which project rules apply when a chat begins
+
+Cursor loads project rules from `.cursor/rules/` (here: `.cursor/rules/ai-rules/*.mdc`). Each rule’s frontmatter sets **when** it applies (`alwaysApply: true`, or `globs` when matching files are in context, or when the user @-mentions a rule).
+
+## What to tell the user
+
+- **When**: At the **first** assistant reply in a **new** chat thread after the user’s opening message, and again when the user **starts a new Agent run** (fresh invocation) or clearly begins an unrelated task in a way that feels like a new run—**do not** repeat the full list on every follow-up message in the same thread unless the user asks or open files change which glob-scoped rules plausibly apply.
+- **What**: A short section titled **Active project rules** (or similar). For each relevant rule, give the **`.mdc` filename** plus **one phrase** (from its `description` or purpose).
+- **How to decide “relevant”**:
+  - Always list rules you know have **`alwaysApply: true`** in this folder (they are in context).
+  - List **glob-scoped** rules when the user’s open files, attached paths, or stated task clearly match that rule’s `globs` (e.g. `*.md` → markdown rule).
+  - List rules the user **@-mentioned** in the prompt.
+  - If you are unsure which glob rules fired, say so briefly; still list always-applied and @-mentioned rules.
+
+Keep the block **compact** (bullets or a tiny table), not a copy of full rule bodies.

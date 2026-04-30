@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Evolve rules when the codebase patterns change
 
-Use this when writing or reviewing code—not only when editing `.cursor/rules/cursor-rules-vscode-extension/`.
+Use this when writing or reviewing code—not only when editing `.cursor/rules/ai-rules/`.
 
 ## When to consider a rule change
 
@@ -17,7 +17,7 @@ Use this when writing or reviewing code—not only when editing `.cursor/rules/c
 
 ## Analysis habit
 
-- Compare new or changed code with current rules in `.cursor/rules/cursor-rules-vscode-extension/`
+- Compare new or changed code with current rules in `.cursor/rules/ai-rules/`
 - Prefer one focused rule per topic over expanding an unrelated file
 - Pull examples from real repo code when proposing wording
 
@@ -40,4 +40,4 @@ Document the repeated **select/where/error-handling** conventions in a dedicated
 - After large refactors, check whether rules still match how the code works
 - Cross-link related rules instead of duplicating long paragraphs
 
-For **how** to author files (frontmatter, globs, naming), follow [how-to-write-rules.mdc](mdc:.cursor/rules/cursor-rules-vscode-extension/how-to-write-rules.mdc). For **deprecation, quality bar, and doc sync**, follow [cursor-rules-maintenance.mdc](mdc:.cursor/rules/cursor-rules-vscode-extension/cursor-rules-maintenance.mdc).
+For **how** to author files (frontmatter, globs, naming), follow [write-cursor-rules-for-this-project.mdc](mdc:.cursor/rules/ai-rules/write-cursor-rules-for-this-project.mdc). For **deprecation, quality bar, and doc sync**, follow [maintain-cursor-rules.mdc](mdc:.cursor/rules/ai-rules/maintain-cursor-rules.mdc).
