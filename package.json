@@ -4,24 +4,38 @@
   "description": "Install and manage Wyvern AI agent project rules under .cursor/rules/ai-rules (Cursor) with optional Cline sync to .clinerules/ai-rules/.",
   "version": "0.1.0",
   "publisher": "wyvernsystems",
+  "license": "MIT",
+  "icon": "icon.png",
+  "homepage": "https://github.com/wyvernsystems/cursor-rules-vscode-extension#readme",
+  "bugs": {
+    "url": "https://github.com/wyvernsystems/cursor-rules-vscode-extension/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wyvernsystems/cursor-rules-vscode-extension"
+    "url": "https://github.com/wyvernsystems/cursor-rules-vscode-extension.git"
   },
+  "keywords": [
+    "cursor",
+    "cursor-rules",
+    "ai",
+    "ai-agent",
+    "rules",
+    "cline",
+    "prompt-engineering",
+    "code-assistant"
+  ],
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.85.0",
+    "node": ">=18.18.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Snippets"
   ],
   "activationEvents": [
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
-  "files": [
-    "out",
-    "bundled"
-  ],
   "contributes": {
     "commands": [
       {

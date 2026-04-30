@@ -1,8 +1,7 @@
-import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as vscode from "vscode";
 import { isClineInstalled } from "./cline";
-import { listBundledMdcs, readBundleManifest } from "./manifest";
+import { listBundledMdcs, readBundleManifest, type BundleManifest } from "./manifest";
 import {
   applyModeProfile,
   applyRolePick,
@@ -10,13 +9,20 @@ import {
   ROLE_RULES,
   type Mode,
 } from "./modes";
-import { createAiRulesOutputChannel, quickPickIconsForRule, showPackStatusInOutput } from "./ruleStatusUi";
+import {
+  createAiRulesOutputChannel,
+  quickPickIconsForRule,
+  showPackStatusInOutput,
+} from "./ruleStatusUi";
 import {
   applyEvolveDefaultOff,
+  copyManifestFiles,
   globalMirrorDir,
   installBundleToRulesDir,
   isRuleEnabled,
   pathExists,
+  removeGlobalMirror,
+  replaceGlobalMirror,
   resetRulesDirToBundle,
   setAllMdcsEnabled,
   setRuleEnabled,
@@ -24,6 +30,7 @@ import {
   wasEvolveEnabledBeforeCopy,
   workspaceRulesDir,
 } from "./rulesOperations";
+import { assertContainedPath, isSafeManifestEntry } from "./safePaths";
 import { bindRulesTreeView, RulesTreeProvider } from "./sidebarTreeView";
 
 const LAST_SEEN_VERSION_KEY = "aiRules.lastSeenExtensionVersion";
@@ -39,12 +46,13 @@ function getAiRulesBoolean(key: string, defaultValue: boolean): boolean {
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const extensionRoot = context.extensionPath;
   const bundleDir = path.join(extensionRoot, "bundled", "ai-rules");
-  let manifest;
+  let manifest: BundleManifest;
   try {
     manifest = readBundleManifest(extensionRoot);
-  } catch {
+  } catch (e) {
+    const reason = e instanceof Error ? e.message : String(e);
     vscode.window.showErrorMessage(
-      "AI Rules: bundled copy is missing. Run `npm run sync-bundled` from the extension repo, then reload."
+      `AI Rules: failed to load bundled rules — ${reason}. Reinstall the extension or rebuild the bundle.`
     );
     return;
   }
@@ -157,18 +165,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       throw new Error(`Missing bundle at ${bundleDir}`);
     }
     const evolveWas = await wasEvolveEnabledBeforeCopy(globalDir);
-    await fs.mkdir(path.dirname(globalDir), { recursive: true });
-    await fs.rm(globalDir, { recursive: true, force: true });
-    await fs.cp(bundleDir, globalDir, { recursive: true });
+    await replaceGlobalMirror(globalDir, bundleDir);
     await applyEvolveDefaultOff(globalDir, evolveWas);
     vscode.window.showInformationMessage("AI Rules: global mirror updated (extension storage).");
   });
 
   register("aiRules.disableAllGlobal", async () => {
     try {
-      await fs.rm(globalDir, { recursive: true, force: true });
+      await removeGlobalMirror(globalDir);
     } catch {
-      /* already gone */
+      /* already gone or refused for safety */
     }
     vscode.window.showInformationMessage("AI Rules: global mirror removed.");
   });
@@ -179,13 +185,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       throw new Error("Global mirror is empty. Run “AI Rules: Enable all rules (global mirror)” first.");
     }
     const rulesDir = workspaceRulesDir(root);
-    await fs.mkdir(rulesDir, { recursive: true });
     const evolveWas = await wasEvolveEnabledBeforeCopy(rulesDir);
-    for (const f of manifest.files) {
-      const dest = path.join(rulesDir, f);
-      await fs.mkdir(path.dirname(dest), { recursive: true });
-      await fs.copyFile(path.join(globalDir, f), dest);
-    }
+    await copyManifestFiles(globalDir, rulesDir, manifest);
     await applyEvolveDefaultOff(rulesDir, evolveWas);
     const clineSynced = await maybeAutoSyncCline(root);
     vscode.window.showInformationMessage(
@@ -296,7 +297,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   context.subscriptions.push(
     vscode.commands.registerCommand("aiRules.revealRuleFile", async (rulePath?: string) => {
-      if (!rulePath) {
+      if (typeof rulePath !== "string" || !isSafeManifestEntry(rulePath)) {
+        return;
+      }
+      if (!manifest.files.includes(rulePath)) {
         return;
       }
       const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -307,6 +311,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       const rulesDir = workspaceRulesDir(root);
       const enabledPath = path.join(rulesDir, rulePath);
       const disabledPath = `${enabledPath}.disabled`;
+      assertContainedPath(rulesDir, enabledPath, "rules directory");
       const target = (await pathExists(enabledPath))
         ? enabledPath
         : (await pathExists(disabledPath))

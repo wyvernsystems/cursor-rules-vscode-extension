@@ -1,13 +1,23 @@
 import * as fs from "node:fs/promises";
+import * as fsSync from "node:fs";
 import * as path from "node:path";
 import type { BundleManifest } from "./manifest";
+import {
+  assertContainedPath,
+  assertSafeDeletionTarget,
+  isSafeManifestEntry,
+} from "./safePaths";
 
 export const RULES_SUBDIR = "ai-rules";
+
 /**
  * Manifest paths use forward slashes; `path.join` normalizes them per platform
  * when we touch disk, so we keep slashes in the constant for stable comparisons.
  */
 export const EVOLVE_RULE = "rules-for-rules/evolve-rules-when-codebase-patterns-change.mdc";
+
+const RULES_DIR_SEGMENTS = [".cursor", "rules", RULES_SUBDIR] as const;
+const GLOBAL_MIRROR_SEGMENTS = ["ai-rules-mirror", RULES_SUBDIR] as const;
 
 /** Cursor ignores `*.mdc.disabled`; toggling = rename. */
 export function disabledName(ruleFile: string): string {
@@ -31,18 +41,54 @@ export async function pathExists(p: string): Promise<boolean> {
   }
 }
 
-export async function copyDir(src: string, dest: string): Promise<void> {
+/**
+ * Resolves `entry` under `base` after rejecting unsafe shapes (traversal,
+ * absolute paths, suspicious characters) and confirming the resolved path
+ * stays inside `base`. Centralized so every manifest-driven path goes through
+ * the same gate.
+ */
+function safeJoinUnderBase(base: string, entry: string, label: string): string {
+  if (!isSafeManifestEntry(entry)) {
+    throw new Error(`Refusing unsafe rule path: ${entry}`);
+  }
+  const resolved = path.join(base, entry);
+  assertContainedPath(base, resolved, label);
+  return resolved;
+}
+
+/**
+ * Recursive copy that refuses to follow symlinks. The bundled folder shipped
+ * inside the VSIX should never contain symlinks, but a tampered install could,
+ * so we filter them out by lstat before each entry is copied.
+ */
+async function copyTreeWithoutSymlinks(src: string, dest: string): Promise<void> {
   await fs.mkdir(path.dirname(dest), { recursive: true });
-  await fs.cp(src, dest, { recursive: true });
+  await fs.cp(src, dest, {
+    recursive: true,
+    force: true,
+    errorOnExist: false,
+    filter: (entrySrc) => {
+      try {
+        return !fsSync.lstatSync(entrySrc).isSymbolicLink();
+      } catch {
+        return false;
+      }
+    },
+  });
 }
 
 export async function isRuleEnabled(rulesDir: string, ruleFile: string): Promise<boolean> {
-  return pathExists(path.join(rulesDir, ruleFile));
+  const target = safeJoinUnderBase(rulesDir, ruleFile, "rules directory");
+  return pathExists(target);
 }
 
-export async function setRuleEnabled(rulesDir: string, ruleFile: string, enabled: boolean): Promise<void> {
-  const active = path.join(rulesDir, ruleFile);
-  const dis = path.join(rulesDir, disabledName(ruleFile));
+export async function setRuleEnabled(
+  rulesDir: string,
+  ruleFile: string,
+  enabled: boolean
+): Promise<void> {
+  const active = safeJoinUnderBase(rulesDir, ruleFile, "rules directory");
+  const dis = `${active}.disabled`;
   if (enabled) {
     if (await pathExists(dis)) {
       if (await pathExists(active)) {
@@ -74,12 +120,13 @@ export async function setAllMdcsEnabled(
 }
 
 export async function wasEvolveEnabledBeforeCopy(rulesDir: string): Promise<boolean> {
-  return pathExists(path.join(rulesDir, EVOLVE_RULE));
+  return pathExists(safeJoinUnderBase(rulesDir, EVOLVE_RULE, "rules directory"));
 }
 
 /**
- * Overwrites only manifest files from the bundle; leaves unknown files in the rules folder alone.
- * After copy, turns evolve rule off unless it was already active before this install.
+ * Overwrites only manifest files from the bundle; leaves unknown files in the
+ * rules folder alone. After copy, turns the evolve rule off unless it was
+ * already active before this install.
  */
 export async function installBundleToRulesDir(
   bundleDir: string,
@@ -90,8 +137,8 @@ export async function installBundleToRulesDir(
   const evolveWasEnabled = await wasEvolveEnabledBeforeCopy(rulesDir);
   await fs.mkdir(rulesDir, { recursive: true });
   for (const f of manifest.files) {
-    const src = path.join(bundleDir, f);
-    const dest = path.join(rulesDir, f);
+    const src = safeJoinUnderBase(bundleDir, f, "bundle directory");
+    const dest = safeJoinUnderBase(rulesDir, f, "rules directory");
     await fs.mkdir(path.dirname(dest), { recursive: true });
     await fs.copyFile(src, dest);
   }
@@ -100,10 +147,48 @@ export async function installBundleToRulesDir(
   }
 }
 
-export async function applyEvolveDefaultOff(rulesDir: string, wasEvolveEnabledBeforeCopy: boolean): Promise<void> {
+export async function applyEvolveDefaultOff(
+  rulesDir: string,
+  wasEvolveEnabledBeforeCopy: boolean
+): Promise<void> {
   if (!wasEvolveEnabledBeforeCopy) {
     await setRuleEnabled(rulesDir, EVOLVE_RULE, false);
   }
+}
+
+/**
+ * Per-file copy of a validated manifest from a trusted source dir into a
+ * trusted destination dir. Used by "Copy global mirror into workspace".
+ */
+export async function copyManifestFiles(
+  sourceDir: string,
+  destDir: string,
+  manifest: BundleManifest
+): Promise<void> {
+  await fs.mkdir(destDir, { recursive: true });
+  for (const f of manifest.files) {
+    const src = safeJoinUnderBase(sourceDir, f, "source directory");
+    const dest = safeJoinUnderBase(destDir, f, "destination directory");
+    await fs.mkdir(path.dirname(dest), { recursive: true });
+    await fs.copyFile(src, dest);
+  }
+}
+
+/**
+ * Replace `globalDir` with a fresh copy of `bundleDir`. Asserts `globalDir`
+ * looks like the extension's mirror so we can never recursively delete an
+ * unrelated path even if a constant is corrupted at runtime.
+ */
+export async function replaceGlobalMirror(globalDir: string, bundleDir: string): Promise<void> {
+  assertSafeDeletionTarget(globalDir, GLOBAL_MIRROR_SEGMENTS, "global mirror");
+  await fs.mkdir(path.dirname(globalDir), { recursive: true });
+  await fs.rm(globalDir, { recursive: true, force: true });
+  await copyTreeWithoutSymlinks(bundleDir, globalDir);
+}
+
+export async function removeGlobalMirror(globalDir: string): Promise<void> {
+  assertSafeDeletionTarget(globalDir, GLOBAL_MIRROR_SEGMENTS, "global mirror");
+  await fs.rm(globalDir, { recursive: true, force: true });
 }
 
 function stripDisabledSuffix(filename: string): string {
@@ -127,12 +212,13 @@ function isShippedRuleFile(relPath: string, manifest: BundleManifest): boolean {
 /**
  * Walks `rulesDir` recursively and returns repo-relative paths using forward
  * slashes—matches the manifest format so comparisons are platform-independent.
+ * Does not follow symlinks.
  */
 async function listRuleFilesRecursive(rulesDir: string): Promise<string[]> {
   const out: string[] = [];
   const walk = async (relDir: string): Promise<void> => {
     const abs = path.join(rulesDir, relDir);
-    let entries;
+    let entries: import("node:fs").Dirent[];
     try {
       entries = await fs.readdir(abs, { withFileTypes: true });
     } catch {
@@ -142,10 +228,13 @@ async function listRuleFilesRecursive(rulesDir: string): Promise<string[]> {
       if (ent.name.startsWith(".")) {
         continue;
       }
+      if (ent.isSymbolicLink()) {
+        continue;
+      }
       const rel = relDir ? `${relDir}/${ent.name}` : ent.name;
       if (ent.isDirectory()) {
         await walk(rel);
-      } else {
+      } else if (ent.isFile()) {
         out.push(rel);
       }
     }
@@ -155,10 +244,14 @@ async function listRuleFilesRecursive(rulesDir: string): Promise<string[]> {
 }
 
 /**
- * Remove files in the rules folder that are not part of the bundle (including evolved one-off rules).
- * Walks recursively so subfolder entries are checked against manifest paths.
+ * Remove files in the rules folder that are not part of the bundle (including
+ * evolved one-off rules). Walks recursively so subfolder entries are checked
+ * against manifest paths.
  */
-export async function deleteUnshippedFiles(rulesDir: string, manifest: BundleManifest): Promise<void> {
+async function deleteUnshippedFiles(
+  rulesDir: string,
+  manifest: BundleManifest
+): Promise<void> {
   if (!(await pathExists(rulesDir))) {
     return;
   }
@@ -167,7 +260,13 @@ export async function deleteUnshippedFiles(rulesDir: string, manifest: BundleMan
     if (isShippedRuleFile(rel, manifest)) {
       continue;
     }
-    await fs.rm(path.join(rulesDir, rel), { force: true });
+    if (!isSafeManifestEntry(rel)) {
+      // Unexpected on-disk filename—skip rather than risk an out-of-tree rm.
+      continue;
+    }
+    const target = path.join(rulesDir, rel);
+    assertContainedPath(rulesDir, target, "rules directory");
+    await fs.rm(target, { force: true });
   }
 }
 
@@ -176,9 +275,10 @@ export async function resetRulesDirToBundle(
   rulesDir: string,
   manifest: BundleManifest
 ): Promise<void> {
+  assertSafeDeletionTarget(rulesDir, RULES_DIR_SEGMENTS, "workspace rules folder");
   await fs.mkdir(path.dirname(rulesDir), { recursive: true });
   await fs.rm(rulesDir, { recursive: true, force: true });
-  await fs.cp(bundleDir, rulesDir, { recursive: true });
+  await copyTreeWithoutSymlinks(bundleDir, rulesDir);
   await setRuleEnabled(rulesDir, EVOLVE_RULE, false);
   await deleteUnshippedFiles(rulesDir, manifest);
 }
@@ -202,7 +302,14 @@ export async function syncBundledMdcsToClinerules(
   await fs.mkdir(dest, { recursive: true });
   const mdcs = manifest.files.filter((f) => f.endsWith(".mdc"));
   for (const mdc of mdcs) {
-    const body = await fs.readFile(path.join(bundleDir, mdc), "utf8");
-    await fs.writeFile(path.join(dest, clineMirrorName(mdc)), body, "utf8");
+    const srcPath = safeJoinUnderBase(bundleDir, mdc, "bundle directory");
+    const destName = clineMirrorName(mdc);
+    if (!isSafeManifestEntry(destName)) {
+      throw new Error(`Refusing unsafe Cline mirror filename: ${destName}`);
+    }
+    const destPath = path.join(dest, destName);
+    assertContainedPath(dest, destPath, "Cline rules directory");
+    const body = await fs.readFile(srcPath, "utf8");
+    await fs.writeFile(destPath, body, "utf8");
   }
 }

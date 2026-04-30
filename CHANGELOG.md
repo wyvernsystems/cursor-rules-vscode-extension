@@ -6,11 +6,50 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Security
+
+- **Validated bundled manifest at load.** `src/manifest.ts` now schema-checks
+  `bundled/manifest.json`: rejects missing fields, non-array `files`, and any
+  entry that fails the safe-path predicate (`^[A-Za-z0-9_./-]+$`, no `..`,
+  no leading `/` or `./`, ≤ 200 chars). A tampered manifest aborts activation
+  with a clear error instead of being trusted.
+- **Path containment checks** on every operation that resolves a manifest entry
+  under a base directory (bundle, workspace rules dir, global mirror, Cline
+  mirror). New `src/safePaths.ts` module exposes `isSafeManifestEntry`,
+  `assertContainedPath`, and `assertSafeDeletionTarget`.
+- **Destructive operations gated by suffix assertions.** `resetRulesDirToBundle`
+  refuses to delete a path that doesn't end with `.cursor/rules/ai-rules`;
+  `replaceGlobalMirror` / `removeGlobalMirror` refuse paths not ending with
+  `ai-rules-mirror/ai-rules`. Defends against constant corruption widening the
+  blast radius of `rm -rf`.
+- **Recursive copies refuse symlinks.** The `fs.cp(...)` calls that mirror the
+  bundle into the workspace and global storage now use a `filter` callback
+  that skips symbolic links. The directory walker in `deleteUnshippedFiles`
+  also skips symlinks.
+- **Hardened `aiRules.revealRuleFile` arguments**: rejects non-string args,
+  unsafe shapes, and any `rulePath` not present in the validated manifest
+  before resolving / opening.
+- **Friendlier failure surface**: if `bundled/manifest.json` is missing or
+  invalid, the user sees the underlying reason in the error toast instead of
+  a generic "missing copy" string.
+
 ### Changed
 
 - **Rule pack: simplified and deduped.** Every rule under `.cursor/rules/ai-rules/`
   rewritten as a tighter, scannable bullet list so models with limited context can
   honor every active rule. Cross-rule overlap removed.
+- **`src/extension.ts`** routes all destructive / copy operations through new
+  helpers in `src/rulesOperations.ts` (`copyManifestFiles`, `replaceGlobalMirror`,
+  `removeGlobalMirror`) instead of inline `fs.rm` / `fs.cp` calls.
+- **Marketplace metadata** filled in: `license: MIT`, `icon: icon.png`,
+  `homepage`, `bugs`, `keywords`, `engines.node ≥ 18.18.0`, repo URL switched
+  to `git+https://...` form for `vsce` compatibility.
+- **`.vscodeignore`** tightened: source, scripts, lockfiles, build info, hi-res
+  icon source, and `*.vsix` excluded from the packaged extension. Only
+  compiled JS, bundled rules, the 128×128 icon, README, CHANGELOG, and LICENSE
+  are shipped.
+- **`.gitignore`** ignores `*.tsbuildinfo` and `icon-source.png` (the hi-res
+  master kept locally for re-rendering the 128×128 marketplace icon).
 - **Renamed**
   `rules-for-rules/state-active-project-rules.mdc` →
   `rules-for-rules/state-active-project-rules-in-prompt-response.mdc`. Body reduced
