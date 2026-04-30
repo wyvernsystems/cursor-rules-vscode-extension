@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-04-29
+
+### Changed
+
+- **Publisher renamed** `wyvernsystems` → `WyvernSystemsLLC` in
+  `package.json` to match the actual VS Code Marketplace publisher account.
+  The Marketplace package id is now **`WyvernSystemsLLC.ai-rules`**. README
+  and REQUIREMENTS updated to reflect the new id. No prior public
+  Marketplace release used the old id (uploads were rejected with a
+  publisher-mismatch error), so this is a no-op for end users.
+
 ## [1.0.1] - 2026-04-29
 
 ### Fixed
