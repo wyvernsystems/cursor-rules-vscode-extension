@@ -124,6 +124,27 @@ export async function wasEvolveEnabledBeforeCopy(rulesDir: string): Promise<bool
 }
 
 /**
+ * Bundled packs list logical rule paths (`*.mdc`). On disk the file may be
+ * `path.mdc` or `path.mdc.disabled` when the default is off.
+ */
+async function resolveBundledRuleSource(
+  bundleDir: string,
+  logicalRuleFile: string
+): Promise<{ srcPath: string; storeAsDisabled: boolean }> {
+  const active = safeJoinUnderBase(bundleDir, logicalRuleFile, "bundle directory");
+  const dis = `${active}.disabled`;
+  if (await pathExists(active)) {
+    return { srcPath: active, storeAsDisabled: false };
+  }
+  if (await pathExists(dis)) {
+    return { srcPath: dis, storeAsDisabled: true };
+  }
+  throw new Error(
+    `Bundled pack missing ${logicalRuleFile} (need ${logicalRuleFile} or ${logicalRuleFile}.disabled)`
+  );
+}
+
+/**
  * Overwrites only manifest files from the bundle; leaves unknown files in the
  * rules folder alone. After copy, turns the evolve rule off unless it was
  * already active before this install.
@@ -137,10 +158,18 @@ export async function installBundleToRulesDir(
   const evolveWasEnabled = await wasEvolveEnabledBeforeCopy(rulesDir);
   await fs.mkdir(rulesDir, { recursive: true });
   for (const f of manifest.files) {
-    const src = safeJoinUnderBase(bundleDir, f, "bundle directory");
-    const dest = safeJoinUnderBase(rulesDir, f, "rules directory");
+    if (!f.endsWith(".mdc")) {
+      const src = safeJoinUnderBase(bundleDir, f, "bundle directory");
+      const dest = safeJoinUnderBase(rulesDir, f, "rules directory");
+      await fs.mkdir(path.dirname(dest), { recursive: true });
+      await fs.copyFile(src, dest);
+      continue;
+    }
+    const { srcPath, storeAsDisabled } = await resolveBundledRuleSource(bundleDir, f);
+    const destBase = safeJoinUnderBase(rulesDir, f, "rules directory");
+    const dest = storeAsDisabled ? `${destBase}.disabled` : destBase;
     await fs.mkdir(path.dirname(dest), { recursive: true });
-    await fs.copyFile(src, dest);
+    await fs.copyFile(srcPath, dest);
   }
   if (options.applyEvolveOffUnlessWasEnabled) {
     await applyEvolveDefaultOff(rulesDir, evolveWasEnabled);
@@ -167,10 +196,18 @@ export async function copyManifestFiles(
 ): Promise<void> {
   await fs.mkdir(destDir, { recursive: true });
   for (const f of manifest.files) {
-    const src = safeJoinUnderBase(sourceDir, f, "source directory");
-    const dest = safeJoinUnderBase(destDir, f, "destination directory");
+    if (!f.endsWith(".mdc")) {
+      const src = safeJoinUnderBase(sourceDir, f, "source directory");
+      const dest = safeJoinUnderBase(destDir, f, "destination directory");
+      await fs.mkdir(path.dirname(dest), { recursive: true });
+      await fs.copyFile(src, dest);
+      continue;
+    }
+    const { srcPath, storeAsDisabled } = await resolveBundledRuleSource(sourceDir, f);
+    const destBase = safeJoinUnderBase(destDir, f, "destination directory");
+    const dest = storeAsDisabled ? `${destBase}.disabled` : destBase;
     await fs.mkdir(path.dirname(dest), { recursive: true });
-    await fs.copyFile(src, dest);
+    await fs.copyFile(srcPath, dest);
   }
 }
 
@@ -302,7 +339,7 @@ export async function syncBundledMdcsToClinerules(
   await fs.mkdir(dest, { recursive: true });
   const mdcs = manifest.files.filter((f) => f.endsWith(".mdc"));
   for (const mdc of mdcs) {
-    const srcPath = safeJoinUnderBase(bundleDir, mdc, "bundle directory");
+    const { srcPath } = await resolveBundledRuleSource(bundleDir, mdc);
     const destName = clineMirrorName(mdc);
     if (!isSafeManifestEntry(destName)) {
       throw new Error(`Refusing unsafe Cline mirror filename: ${destName}`);

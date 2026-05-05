@@ -111,6 +111,11 @@
         "category": "AI Rulebook"
       },
       {
+        "command": "aiRules.modeLowToken",
+        "title": "AI Rulebook: Mode — Low token (minimal rules + dense handoff)",
+        "category": "AI Rulebook"
+      },
+      {
         "command": "aiRules.modeRole",
         "title": "AI Rulebook: Mode — Role… (pick a single role to frame replies)",
         "category": "AI Rulebook"
@@ -176,9 +181,14 @@
           "group": "navigation@3"
         },
         {
-          "command": "aiRules.modeRole",
+          "command": "aiRules.modeLowToken",
           "when": "view == aiRules.rulesTree",
           "group": "navigation@4"
+        },
+        {
+          "command": "aiRules.modeRole",
+          "when": "view == aiRules.rulesTree",
+          "group": "navigation@5"
         },
         {
           "command": "aiRules.refreshTree",

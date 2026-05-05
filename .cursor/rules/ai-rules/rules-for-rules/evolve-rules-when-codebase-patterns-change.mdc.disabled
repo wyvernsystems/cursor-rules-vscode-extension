@@ -1,0 +1,14 @@
+---
+description: Add/update project rules when patterns repeat or stabilize
+alwaysApply: true
+---
+
+# Evolve rules with code
+
+When **writing or reviewing** code (not only editing rules):
+
+Add/update a rule when: new unstated pattern; same shape copied widely; recurring bugs/reviews; default library/tool spreads; security/perf/test norms stabilize.
+
+**How**: diff vs `.cursor/rules/ai-rules/`; one topic per file; examples from repo; cross-link instead of duplicating.
+
+Format bar: [write-cursor-rules-for-this-project.mdc](mdc:.cursor/rules/ai-rules/rules-for-rules/write-cursor-rules-for-this-project.mdc)

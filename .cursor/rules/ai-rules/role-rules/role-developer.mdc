@@ -1,11 +1,8 @@
 ---
-description: Frame replies for a working software developer
+description: Concise, implementation-focused—paths, diffs, trade-offs
 alwaysApply: false
 ---
 
 # Audience: developer
 
-- Skip foundational explanations; lead with code, file paths, and trade-offs.
-- Default vocabulary: pointer / reference, async, transaction, idempotent, race, etc.
-- Show diffs over prose when explaining changes.
-- Mention impact on tests, CI, observability when relevant.
+Lead with code and file paths; skip tutorials. Show diffs when explaining changes. Mention tests/CI/observability when relevant. Assume shared vocabulary (async, race, idempotent, etc.).

@@ -22,19 +22,20 @@ Cursor and Cline both load rules automatically when you chat with them, so the
 assistant follows your team's conventions without you having to remind it
 every message.
 
-This extension ships **27 ready-made rules** grouped into 5 folders, plus a
-sidebar to turn them on and off, plus four **modes** (Plan / Build / Test /
-Role) that flip presets in one click. You don't have to write any rules
-yourself to get value — install, click "Install / update rules in workspace",
-and start chatting.
+This extension ships **28 ready-made rules** grouped into 6 folders, plus a
+sidebar to turn them on and off, plus **modes** (Plan / Build / Test / Low
+token / Role…) that flip presets in one click. You don't have to write any
+rules yourself to get value — install, click "Install / update rules in
+workspace", and start chatting.
 
 ```text
 .cursor/rules/ai-rules/
 ├── ABOUT_RULES.md
 ├── coding-rules/            ← how to write and ship code
+├── context-rules/           ← dense handoff for new chats; low-token habits
 ├── documentation-rules/     ← how to maintain docs and changelogs
 ├── role-rules/              ← how to frame replies for a given audience
-├── rules-for-rules/         ← how the rule pack itself is authored and announced
+├── rules-for-rules/         ← how the rule pack is authored and announced
 └── test-rules/              ← how to design and write tests
 ```
 
@@ -43,13 +44,15 @@ and start chatting.
 1. Install **AI Rulebook** in Cursor or VS Code.
 2. Open the project you want the rules to apply to. The first time the
    extension sees a project, it drops the bundled rule pack into
-   `.cursor/rules/ai-rules/` and starts it in **Build mode** (developer role on,
-   tests off). Existing `.cursor/rules/ai-rules/` folders are never overwritten.
+   `.cursor/rules/ai-rules/` and starts it in **Build mode** (developer role
+   on; tests off; `rules-for-rules/*` and several heavy `coding-rules/*` off for
+   a lighter default). Existing `.cursor/rules/ai-rules/` folders are never
+   overwritten.
 3. Click the checklist icon in the **activity bar** (left side) to open the
    **AI Rulebook** sidebar.
 4. Toggle individual rules with the checkboxes in the sidebar, or pick a
-   preset with the **Mode — Plan / Build / Test / Role…** buttons at the top
-   of the sidebar.
+   preset with the **Mode — Plan / Build / Test / Low token / Role…** buttons
+   at the top of the sidebar.
 5. Start chatting. The AI now follows the rules you have turned on.
 
 To opt out of the first-time auto-install, set
@@ -71,15 +74,16 @@ What you can do from the sidebar:
 
 | Where | Action |
 |-------|--------|
-| Title bar buttons (top of the view) | One-click **Mode — Plan / Build / Test / Role…** presets, plus a **Refresh** icon. The overflow menu (`…`) holds bulk actions: Enable all, Disable all, Install / update, Reset, Show active rules. |
+| Title bar buttons (top of the view) | One-click **Mode — Plan / Build / Test / Low token / Role…** presets, plus a **Refresh** icon. The overflow menu (`…`) holds bulk actions: Enable all, Disable all, Install / update, Reset, Show active rules. |
 | **Folder row** (e.g. `coding-rules/`) | Right-click → **Enable every rule in this folder** or **Disable every rule in this folder**. Inline check-all / close-all icons appear on hover. |
 | **Rule row checkbox** | Click the checkbox to flip the rule on / off (renames `<name>.mdc` ↔ `<name>.mdc.disabled`). |
 | **Rule row label** | Click the rule name to open the `.mdc` file in the editor. |
 | **`Show active rules` command** | Opens / focuses the sidebar so you can scan the colored on / off state, and writes a plain-text snapshot to **Output → AI Rulebook** for logging. |
 
-Switching modes from the sidebar buttons only flips role and test rules —
-your always-on coding, documentation, and meta rules stay enabled. Manual
-changes you make via the checkboxes always win until the next mode switch.
+Switching modes applies each preset’s enable/disable lists (Build turns off
+several coding rules and all `rules-for-rules/*`). Plan and Test restore those
+when you leave Build. Manual checkbox changes persist until the next mode
+switch replaces them.
 
 ### Same colors in the workbench Explorer
 
@@ -118,9 +122,10 @@ Every command lives under the **AI Rulebook:** prefix in the command palette.
 
 | Command | Plain English |
 |---------|---------------|
-| Mode — Plan | Architect role on; tests off. |
-| Mode — Build | Developer role on; tests off. |
-| Mode — Test | Tester role on; all `test-rules/*` on. |
+| Mode — Plan | Architect on; other roles + tests off; full coding + `rules-for-rules/*` on. |
+| Mode — Build | Developer on; other roles + tests off; `rules-for-rules/*` off; verify / secure / reuse / dead-code / LTS coding rules off (lightweight). |
+| Mode — Test | Tester on; all `test-rules/*` on; other roles off; full coding + `rules-for-rules/*` on. |
+| Mode — Low token | Only minimal rules (see `ABOUT_RULES.md`) for long, token-efficient sessions. |
 | Mode — Role… | Pick a single role; the others get turned off. |
 
 ### Global mirror (cross-project)
@@ -145,16 +150,17 @@ storage. You can populate it once and then push it into any project.
 
 ## Modes
 
-A "mode" is a one-click preset that turns specific rules on and others off.
-**Always-on coding, documentation, and meta rules are not touched by modes** —
-they keep running across every mode.
+A "mode" is a one-click preset. **Build** is optimized for day-to-day coding
+(fewer rules in context). **Plan** and **Test** turn the full coding + meta set
+back on. **Low token** keeps only a tiny subset for long sessions.
 
 | Mode | Effect |
 |------|--------|
-| **Plan** | Turns on `role-architect`. Turns off all other roles and all test rules. Use when you want the assistant to design / discuss before coding. |
-| **Build** | Turns on `role-developer`. Turns off all other roles and all test rules. Use when you want the assistant to write production code. |
-| **Test** | Turns on `role-tester` and **every** rule under `test-rules/`. Turns off the other roles. Use when you want the assistant to write tests. |
-| **Role…** | Pops up a picker so you can turn on a single role (and turn off the others). Doesn't touch test rules. |
+| **Plan** | `role-architect` on; other roles + all test rules off; restores `rules-for-rules/*` and the “heavy” coding rules Build disables. |
+| **Build** | `role-developer` on; other roles + all test rules off; **`rules-for-rules/*` off**; **off** verify-syntax, secure-code, reuse, remove-dead-code, prefer-LTS. Docs + `write-clean-code` + `organize-repository-by-feature` stay on. |
+| **Test** | `role-tester` and every `test-rules/*` on; other roles off; restores full coding + `rules-for-rules/*`. |
+| **Low token** | Only `write-clean-code`, `organize-repository-by-feature`, `dense-session-handoff-context`, and `low-token-session-habits` on—minimal context. |
+| **Role…** | Picks one role; others off. Does not change test rules. |
 
 You can also flip individual rules manually any time, in the sidebar or via
 the command palette.
@@ -173,17 +179,24 @@ the command palette.
 
 For longer descriptions read [`bundled/ai-rules/ABOUT_RULES.md`](./bundled/ai-rules/ABOUT_RULES.md).
 
-### `coding-rules/` — always on
+### `coding-rules/`
 
 | Rule | What it does |
 |------|--------------|
-| `write-clean-code.mdc` | Naming, function size, comments, explicit dependencies, clear errors. |
-| `reuse-code-before-duplicating.mdc` | Search for existing helpers before adding new ones; extract on the third copy. |
-| `organize-repository-by-feature.mdc` | Feature-first folders, tidy root, stable entry points, colocated tests. |
-| `secure-code-data-and-dependencies.mdc` | Secrets, input handling, authorization, crypto, dependencies, logging. |
-| `prefer-lts-stable-runtimes-and-libraries.mdc` | LTS or current stable releases, sensible pinning, security patches. |
-| `verify-syntax-and-fix-before-finishing.mdc` | Re-checks touched files for syntax / type issues and fixes what's safe. |
-| `remove-dead-code-and-unused-files.mdc` | Looks for unused code and orphan files; removes only when clearly safe. |
+| `write-clean-code.mdc` | Naming, function size, comments, explicit dependencies, clear errors. **On in Build.** |
+| `organize-repository-by-feature.mdc` | Feature-first layout, module boundaries. **On in Build.** |
+| `reuse-code-before-duplicating.mdc` | Search and compose; extract on the third copy. **Off in Build** (on in Plan/Test). |
+| `secure-code-data-and-dependencies.mdc` | Secrets, input, authz, crypto, deps, logging. **Off in Build.** |
+| `prefer-lts-stable-runtimes-and-libraries.mdc` | LTS stacks, pinning, maintenance. **Off in Build.** |
+| `verify-syntax-and-fix-before-finishing.mdc` | Re-check edits; run project checks. **Off in Build.** |
+| `remove-dead-code-and-unused-files.mdc` | Remove dead code with evidence. **Off in Build.** |
+
+### `context-rules/`
+
+| Rule | When | What it does |
+|------|------|----------------|
+| `dense-session-handoff-context.mdc` | @-mention or ask for a handoff | One paste-ready dense block (goal / done / stack / blockers / next) for a new chat. |
+| `low-token-session-habits.mdc` | `alwaysApply` when enabled (e.g. Low-token mode) | Terse replies; less redundant recap. |
 
 ### `documentation-rules/`
 
@@ -208,13 +221,13 @@ These change **who the assistant is talking to**.
 | `role-expert.mdc` | Skip foundations; surface non-obvious edge cases; primary sources. |
 | `role-end-user.mdc` | No code or jargon; describe what the user sees, clicks, and gets. |
 
-### `rules-for-rules/`
+### `rules-for-rules/` — **off in Build** by default; on in Plan/Test
 
 | Rule | When it runs | What it does |
 |------|--------------|--------------|
-| `state-active-project-rules-in-prompt-response.mdc` | Always. | Makes the AI start its first reply with a list of every active rule, so you can verify what's loaded. |
-| `evolve-rules-when-codebase-patterns-change.mdc` | Always (when not disabled). | Suggests new / updated rules when patterns stabilize across the codebase. |
-| `write-cursor-rules-for-this-project.mdc` | Only when editing files under `.cursor/rules/ai-rules/` (or @-mentioned). | Spec for authoring & maintaining rule files: location, frontmatter, scope, quality bar. |
+| `state-active-project-rules-in-prompt-response.mdc` | When enabled (`alwaysApply`). | First reply lists active rules under **`### Active project rules`**. |
+| `evolve-rules-when-codebase-patterns-change.mdc` | When enabled. | Suggests new / updated rules when patterns stabilize. |
+| `write-cursor-rules-for-this-project.mdc` | Glob when editing `.cursor/rules/ai-rules/**/*.mdc` (or @-mention). | Authoring spec for `.mdc` files. |
 
 ### `test-rules/` — off by default; turned on by **Mode — Test**
 
@@ -232,7 +245,7 @@ Rules are **instructions to the model**, not enforcement. The assistant
 chooses how to weigh them on every reply. In practice this means:
 
 - **Context is limited.** Every active rule eats space in the model's context
-  window. If you turn on 27 rules **and** include large files **and** a long
+  window. If you turn on all shipped rules **and** include large files **and** a long
   chat history, the model may quietly drop or compress some rules. Symptom:
   rules you turned on don't appear to fire.
 - **Some rules are stronger than others.** Always-on rules are loaded every
@@ -251,8 +264,8 @@ chooses how to weigh them on every reply. In practice this means:
 
 **Practical advice:**
 
-- Don't enable everything by default. Use **Mode — Plan / Build / Test** to
-  match the work you're actually doing.
+- Don't enable everything by default. Use **Plan / Build / Test / Low token**
+  to match the work you're actually doing.
 - For a big or complex task, turn off the rules you don't need that turn.
 - If you want a rule to fire **definitely**, `@-mention` it in your message.
 - If a rule keeps getting ignored, shorten it. Compressed rules survive

@@ -9,6 +9,8 @@
     "coding-rules/secure-code-data-and-dependencies.mdc",
     "coding-rules/verify-syntax-and-fix-before-finishing.mdc",
     "coding-rules/write-clean-code.mdc",
+    "context-rules/dense-session-handoff-context.mdc",
+    "context-rules/low-token-session-habits.mdc",
     "documentation-rules/append-and-deduplicate-requirements.mdc",
     "documentation-rules/update-changelog-for-notable-changes.mdc",
     "documentation-rules/use-this-format-for-markdown-files.mdc",

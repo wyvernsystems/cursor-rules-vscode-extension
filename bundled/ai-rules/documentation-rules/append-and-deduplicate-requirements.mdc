@@ -1,15 +1,13 @@
 ---
-description: Capture stated requirements in REQUIREMENTS.md; merge duplicates
+description: Append requirements to REQUIREMENTS.md; dedupe and merge
 alwaysApply: true
 ---
 
-# Append and dedupe requirements
+# REQUIREMENTS.md
 
-When the user states a **requirement, constraint, acceptance criterion, or non-goal**, persist it in **`REQUIREMENTS.md`** at the repo root (or `docs/REQUIREMENTS.md` if that already exists).
+On requirement / constraint / acceptance criterion / non-goal: persist to **`REQUIREMENTS.md`** (root, or `docs/REQUIREMENTS.md` if present).
 
-- **Read** the file before appending.
-- **Search** for near-duplicates—same idea, different wording.
-- **Consolidate**: merge bullets; mark superseded items as ~~struck~~ or note "**Superseded by:** …" with a date if the file already does.
-- **Group** under existing headings (e.g. *Functional*, *Non-functional*, *Out of scope*); don't invent heavy structure for a tiny file.
-- **Format**: short, testable bullets. Use IDs / numbering and "MUST / SHOULD" only if the file already does.
-- **Missing file**: create `REQUIREMENTS.md` with a title and `## Requirements` heading.
+- Read first; merge near-duplicates; strike or “Superseded by:” per file style.
+- Use existing headings; don’t over-structure tiny files.
+- Short testable bullets; MUST/SHOULD/IDs only if the file already uses them.
+- Missing file: add title + `## Requirements`.

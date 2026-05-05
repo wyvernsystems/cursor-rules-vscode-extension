@@ -11,7 +11,8 @@ details belong in the code or in the rule files.
 - On activation (and on `onDidChangeWorkspaceFolders`), if the workspace has
   no `.cursor/rules/ai-rules/` folder yet, the extension installs the bundled
   defaults automatically and then applies the **Build** mode profile
-  (`role-developer` on, other roles + `test-rules/*` off). Existing rules
+  (`role-developer` on; other roles + `test-rules/*` off; `rules-for-rules/*`
+  and the heavy Build coding rules off). Existing rules
   folders are never overwritten by the auto-install path. The behavior is
   gated by `aiRules.autoInstallOnOpenWorkspace` (default `true`).
 - The `.cursor/rules/ai-rules/` auto-install is further gated by
@@ -48,10 +49,13 @@ details belong in the code or in the rule files.
 - Source of truth for rule text is `.cursor/rules/ai-rules/`. The VSIX ships
   a byte-identical copy under `bundled/ai-rules/`. `npm run verify:bundled`
   must pass before packaging.
-- The pack is organized into five subfolders: `coding-rules/`,
-  `documentation-rules/`, `role-rules/`, `rules-for-rules/`, `test-rules/`.
-- Always-on coding, documentation, and meta rules are enabled by default
-  after install. Role rules and test rules are disabled by default.
+- The pack is organized into six subfolders: `coding-rules/`,
+  `context-rules/`, `documentation-rules/`, `role-rules/`, `rules-for-rules/`,
+  `test-rules/`.
+- After install, documentation rules and the **light** coding rules
+  (`write-clean-code`, `organize-repository-by-feature`) are on; role and test
+  rules follow the **Build** profile; `rules-for-rules/*` and the heavy coding
+  rules Build disables are off until the user switches mode or enables them.
 - The `evolve-rules-when-codebase-patterns-change.mdc` rule is disabled
   immediately after a fresh install or reset, unless it was already enabled
   before the operation.
@@ -60,12 +64,12 @@ details belong in the code or in the rule files.
   `<name>.mdc` ↔ `<name>.mdc.disabled`.
 - Folder rows in the sidebar expose inline **Enable** and **Disable** actions
   that toggle every rule in that subfolder.
-- Four mode commands flip curated presets:
-  - **Mode — Plan**: enable `role-architect`; disable other roles and all test rules.
-  - **Mode — Build**: enable `role-developer`; disable other roles and all test rules.
-  - **Mode — Test**: enable `role-tester` and every `test-rules/*`; disable other roles.
-  - **Mode — Role…**: pick one role; the other roles get disabled.
-- Modes never disable always-on coding, documentation, or meta rules.
+- Mode commands flip curated presets:
+  - **Mode — Plan**: enable `role-architect`; disable other roles and all test rules; enable full coding + `rules-for-rules/*` (restores rules Build turns off).
+  - **Mode — Build**: enable `role-developer`; disable other roles and all test rules; disable `rules-for-rules/*` and the heavy coding rules (verify-syntax, secure-code, reuse, remove-dead-code, prefer-LTS).
+  - **Mode — Test**: enable `role-tester` and every `test-rules/*`; disable other roles; enable full coding + `rules-for-rules/*`.
+  - **Mode — Low token**: enable only the minimal rule subset defined in code (`modes.ts`) for long efficient sessions.
+  - **Mode — Role…**: pick one role; the other roles get disabled (test rules unchanged).
 - When Cline is installed (`saoudrizwan.claude-dev` or
   `saoudrizwan.cline-nightly`) and `aiRules.autoSyncClineWhenInstalled` is
   on, the extension mirrors bundled `.mdc` rules into `.clinerules/ai-rules/`

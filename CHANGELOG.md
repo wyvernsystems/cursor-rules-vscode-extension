@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **`context-rules/`** folder: `dense-session-handoff-context.mdc` (@-mention)
+  for a single paste-ready dense session summary; `low-token-session-habits.mdc`
+  for terse long-session behavior when enabled.
+- **Mode — Low token** (`aiRules.modeLowToken`): enables only the minimal rule
+  subset for token-efficient long sessions (toolbar + command palette).
+
+### Changed
+
+- **Compressed** shipped `.mdc` rules for smaller context footprint without
+  dropping core constraints.
+- **Mode — Build** is lighter by default: turns **off** all `rules-for-rules/*`
+  and **off** verify-syntax, secure-code, reuse, remove-dead-code, and
+  prefer-LTS coding rules (documentation rules + `write-clean-code` +
+  `organize-repository-by-feature` stay on). **Plan** and **Test** restore the
+  full coding + meta set.
+- **`npm run sync-bundled`**: manifest lists logical `*.mdc` paths even when the
+  workspace ships only `*.mdc.disabled`; install / Cline sync resolve the file
+  variant on disk.
+
 ## [1.3.1] - 2026-04-30
 
 ### Changed

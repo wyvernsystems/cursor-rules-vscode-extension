@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Copies `.cursor/rules/ai-rules/` → `bundled/ai-rules/` (recursive)
- * and writes `bundled/manifest.json` listing shipped files as repo-root
- * relative paths with forward slashes (e.g. `coding-rules/write-clean-code.mdc`).
+ * and writes `bundled/manifest.json`. Each rule appears **once** as a logical
+ * `*.mdc` path (whether the file on disk is `*.mdc` or `*.mdc.disabled`).
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -23,10 +23,6 @@ fs.mkdirSync(path.dirname(destDir), { recursive: true });
 fs.rmSync(destDir, { recursive: true, force: true });
 fs.cpSync(sourceDir, destDir, { recursive: true });
 
-/**
- * Walk a directory and yield repo-relative paths (using forward slashes),
- * skipping dotfiles. Matches the verifier's behavior so the manifest is stable.
- */
 function listShippedFiles(rootDir) {
   const out = [];
   const walk = (relDir) => {
@@ -47,7 +43,44 @@ function listShippedFiles(rootDir) {
   return out.sort();
 }
 
-const files = listShippedFiles(destDir);
+const rawFiles = listShippedFiles(destDir);
 
-fs.writeFileSync(manifestPath, JSON.stringify({ version: 1, files }, null, 2) + "\n", "utf8");
-console.log("Synced", files.length, "files to bundled/ai-rules/ and wrote manifest.json");
+const nonMdc = [];
+const activeLogical = new Set();
+const disabledLogical = new Set();
+
+for (const rel of rawFiles) {
+  const norm = rel.split(path.sep).join("/");
+  if (norm.endsWith(".mdc.disabled")) {
+    const logical = norm.slice(0, -".disabled".length);
+    if (!logical.endsWith(".mdc")) {
+      throw new Error(`Invalid rule filename: ${norm}`);
+    }
+    if (activeLogical.has(logical)) {
+      throw new Error(`Rule listed both active and disabled: ${logical}`);
+    }
+    disabledLogical.add(logical);
+  } else if (norm.endsWith(".mdc")) {
+    if (disabledLogical.has(norm)) {
+      throw new Error(`Rule listed both active and disabled: ${norm}`);
+    }
+    activeLogical.add(norm);
+  } else {
+    nonMdc.push(norm);
+  }
+}
+
+const logicalMdcs = [...new Set([...activeLogical, ...disabledLogical])].sort((a, b) =>
+  a.localeCompare(b)
+);
+
+const manifestFiles = [...nonMdc.sort((a, b) => a.localeCompare(b)), ...logicalMdcs];
+
+fs.writeFileSync(manifestPath, JSON.stringify({ version: 1, files: manifestFiles }, null, 2) + "\n", "utf8");
+console.log(
+  "Synced",
+  rawFiles.length,
+  "files to bundled/ai-rules/; manifest",
+  manifestFiles.length,
+  "entries."
+);

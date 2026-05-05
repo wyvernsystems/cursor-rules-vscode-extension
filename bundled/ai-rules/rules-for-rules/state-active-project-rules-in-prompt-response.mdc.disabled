@@ -1,0 +1,20 @@
+---
+description: REQUIRED — first substantive reply lists active rules under "### Active project rules"
+alwaysApply: true
+---
+
+# Active project rules block
+
+On **first substantive reply** (new chat, fresh run, mode/topic change)—before plan, explanation, or code—print exactly:
+
+```markdown
+### Active project rules
+- `<subfolder>/<rule-name>.mdc`
+- `<subfolder>/<rule-name>.mdc`
+- ...
+```
+
+- One bullet per active file under `.cursor/rules/ai-rules/`; skip `*.mdc.disabled`.
+- Include @-mentioned rules and glob-scoped rules matching files/task.
+- Repeat on new topic, mode change (plan / build / test / low token / role), or when asked which rules apply—skip trivial tool-only replies.
+- One short acknowledgement (≤20 words) may precede the heading—nothing else above it.

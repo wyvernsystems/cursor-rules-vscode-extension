@@ -1,0 +1,12 @@
+---
+description: Re-read edits; run project checks; fix what you broke
+alwaysApply: true
+---
+
+# Verify before done
+
+- Re-read edits for syntax/brackets/imports/typos.
+- Run whatever the repo uses: build, typecheck, lint, format—when available.
+- Fix regressions you introduced; note pre-existing issues briefly—don’t widen scope.
+- Avoid blanket lint disables without a tight reason.
+- Don’t claim “clean” without actually checking.
