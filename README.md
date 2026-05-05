@@ -123,9 +123,9 @@ Every command lives under the **AI Rulebook:** prefix in the command palette.
 | Command | Plain English |
 |---------|---------------|
 | Mode — Plan | Architect on; other roles + tests off; full coding + `rules-for-rules/*` on. |
-| Mode — Build | Developer on; other roles + tests off; `rules-for-rules/*` off; verify / secure / reuse / dead-code / LTS coding rules off (lightweight). |
+| Mode — Build | Developer on; other roles + tests off; `rules-for-rules/*` off; verify / secure / LTS coding rules off (lightweight). |
 | Mode — Test | Tester on; all `test-rules/*` on; other roles off; full coding + `rules-for-rules/*` on. |
-| Mode — Low token | Only minimal rules (see `ABOUT_RULES.md`) for long, token-efficient sessions. |
+| Mode — Low token | Only minimal rules (incl. docs) (see `ABOUT_RULES.md`) for long, token-efficient sessions. |
 | Mode — Role… | Pick a single role; the others get turned off. |
 
 ### Global mirror (cross-project)
@@ -157,9 +157,9 @@ back on. **Low token** keeps only a tiny subset for long sessions.
 | Mode | Effect |
 |------|--------|
 | **Plan** | `role-architect` on; other roles + all test rules off; restores `rules-for-rules/*` and the “heavy” coding rules Build disables. |
-| **Build** | `role-developer` on; other roles + all test rules off; **`rules-for-rules/*` off**; **off** verify-syntax, secure-code, reuse, remove-dead-code, prefer-LTS. Docs + `write-clean-code` + `organize-repository-by-feature` stay on. |
+| **Build** | `role-developer` on; other roles + all test rules off; **`rules-for-rules/*` off**; **off** verify-syntax, secure-code, prefer-LTS. Docs + `write-clean-code` + `organize-repository-by-feature` + `reuse` + `remove-dead-code` stay on. |
 | **Test** | `role-tester` and every `test-rules/*` on; other roles off; restores full coding + `rules-for-rules/*`. |
-| **Low token** | Only `write-clean-code`, `organize-repository-by-feature`, `dense-session-handoff-context`, and `low-token-session-habits` on—minimal context. |
+| **Low token** | `write-clean-code`, `organize-repository-by-feature`, `reuse`, all 3 documentation rules, plus `dense-session-handoff-context` and `low-token-session-habits`—minimal context. |
 | **Role…** | Picks one role; others off. Does not change test rules. |
 
 You can also flip individual rules manually any time, in the sidebar or via
@@ -185,11 +185,11 @@ For longer descriptions read [`bundled/ai-rules/ABOUT_RULES.md`](./bundled/ai-ru
 |------|--------------|
 | `write-clean-code.mdc` | Naming, function size, comments, explicit dependencies, clear errors. **On in Build.** |
 | `organize-repository-by-feature.mdc` | Feature-first layout, module boundaries. **On in Build.** |
-| `reuse-code-before-duplicating.mdc` | Search and compose; extract on the third copy. **Off in Build** (on in Plan/Test). |
+| `reuse-code-before-duplicating.mdc` | Search and compose; extract on the third copy. **On in Build.** |
 | `secure-code-data-and-dependencies.mdc` | Secrets, input, authz, crypto, deps, logging. **Off in Build.** |
 | `prefer-lts-stable-runtimes-and-libraries.mdc` | LTS stacks, pinning, maintenance. **Off in Build.** |
 | `verify-syntax-and-fix-before-finishing.mdc` | Re-check edits; run project checks. **Off in Build.** |
-| `remove-dead-code-and-unused-files.mdc` | Remove dead code with evidence. **Off in Build.** |
+| `remove-dead-code-and-unused-files.mdc` | Remove dead code with evidence. **On in Build.** |
 
 ### `context-rules/`
 

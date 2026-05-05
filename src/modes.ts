@@ -30,8 +30,6 @@ export const TEST_RULES = [
 export const BUILD_OFF_CODING_RULES = [
   "coding-rules/verify-syntax-and-fix-before-finishing.mdc",
   "coding-rules/secure-code-data-and-dependencies.mdc",
-  "coding-rules/reuse-code-before-duplicating.mdc",
-  "coding-rules/remove-dead-code-and-unused-files.mdc",
   "coding-rules/prefer-lts-stable-runtimes-and-libraries.mdc",
 ] as const;
 
@@ -83,8 +81,12 @@ export const EVERY_PACK_MDC = [
 export const LOW_TOKEN_ON = [
   "coding-rules/write-clean-code.mdc",
   "coding-rules/organize-repository-by-feature.mdc",
+  "coding-rules/reuse-code-before-duplicating.mdc",
   "context-rules/dense-session-handoff-context.mdc",
   "context-rules/low-token-session-habits.mdc",
+  "documentation-rules/append-and-deduplicate-requirements.mdc",
+  "documentation-rules/update-changelog-for-notable-changes.mdc",
+  "documentation-rules/use-this-format-for-markdown-files.mdc",
 ] as const;
 
 export type Mode = "plan" | "build" | "test" | "lowToken";

@@ -66,7 +66,7 @@ details belong in the code or in the rule files.
   that toggle every rule in that subfolder.
 - Mode commands flip curated presets:
   - **Mode — Plan**: enable `role-architect`; disable other roles and all test rules; enable full coding + `rules-for-rules/*` (restores rules Build turns off).
-  - **Mode — Build**: enable `role-developer`; disable other roles and all test rules; disable `rules-for-rules/*` and the heavy coding rules (verify-syntax, secure-code, reuse, remove-dead-code, prefer-LTS).
+  - **Mode — Build**: enable `role-developer`; disable other roles and all test rules; disable `rules-for-rules/*` and the heavy coding rules (verify-syntax, secure-code, prefer-LTS).
   - **Mode — Test**: enable `role-tester` and every `test-rules/*`; disable other roles; enable full coding + `rules-for-rules/*`.
   - **Mode — Low token**: enable only the minimal rule subset defined in code (`modes.ts`) for long efficient sessions.
   - **Mode — Role…**: pick one role; the other roles get disabled (test rules unchanged).
